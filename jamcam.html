@@ -5,16 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JamCam</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; }
-        .top { background: #FF6B35; color: white; padding: 20px; text-align: center; }
-        .top h1 { margin: 0; font-size: 28px; }
-        .top p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
-        .cameras { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-        .cam { background: white; border-radius: 10px; overflow: hidden; cursor: pointer; }
-        .cam img { width: 100%; height: 140px; object-fit: cover; display: block; }
-        .cam p { padding: 8px; margin: 0; font-size: 12px; font-weight: bold; }
-        .loading { text-align: center; padding: 40px; font-size: 16px; color: #666; }
-        #status { font-size: 12px; color: #4CAF50; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f0f0f0;
+        }
+        .top {
+            background: #FF6B35;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .top h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .top p {
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+        .cameras {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+        }
+        .cam {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .cam img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+        .cam p {
+            padding: 8px;
+            margin: 0;
+            font-size: 12px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #666;
+        }
+        #statusText {
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -22,42 +63,69 @@
 <div class="top">
     <h1>📷 JamCam</h1>
     <p>Beat the jam, check the cam</p>
-    <p id="status">Connecting to LTA cameras...</p>
+    <p id="statusText">Connecting to LTA cameras...</p>
 </div>
 
-<div class="cameras" id="cams">
+<div class="cameras" id="cameraGrid">
     <div class="loading">Loading cameras...</div>
 </div>
 
 <script>
-var KEY = '1UdcYjfDR9mYHeJCOPIloA==';
-var URL = 'https://datamall2.lta.gov.sg/api/lta/odata/v4/TrafficImages';
+    var apiKey = '1UdcYjfDR9mYHeJCOPIloA==';
+    var apiUrl = 'https://datamall2.lta.gov.sg/api/lta/odata/v4/TrafficImages';
 
-fetch(URL, { headers: { 'AccountKey': KEY, 'Accept': 'application/json' } })
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-        var cameras = d.value;
-        var html = '';
-        
-        for (var i = 0; i < cameras.length; i++) {
-            var cam = cameras[i];
-            var id = String(cam.CameraID);
-            var img = cam.ImageLink;
-            var loc = cam.Location || 'Camera ' + id;
+    function fetchData() {
+        var statusEl = document.getElementById('statusText');
+        var gridEl = document.getElementById('cameraGrid');
+
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'AccountKey': apiKey,
+                'Accept': 'application/json'
+            }
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Server responded with ' + response.status);
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            var cameras = data.value;
             
-            html += '<div class="cam" onclick="window.open(\'' + img + '\')">';
-            html += '<img src="' + img + '" alt="' + loc + '">';
-            html += '<p>' + loc + '</p>';
-            html += '</div>';
-        }
-        
-        document.getElementById('cams').innerHTML = html;
-        document.getElementById('status').textContent = '🟢 Live - ' + cameras.length + ' cameras';
-    })
-    .catch(function(e) {
-        document.getElementById('status').textContent = '🔴 Error: ' + e.message;
-        document.getElementById('cams').innerHTML = '<div class="loading">Error loading. <a href="javascript:location.reload()">Try again</a></div>';
-    });
+            if (!cameras || cameras.length === 0) {
+                throw new Error('No cameras found');
+            }
+
+            statusEl.textContent = '🟢 Live - ' + cameras.length + ' cameras';
+            statusEl.style.color = '#4CAF50';
+
+            var html = '';
+            for (var i = 0; i < cameras.length; i++) {
+                var cam = cameras[i];
+                var id = cam.CameraID;
+                var imgUrl = cam.ImageLink;
+                var location = cam.Location || 'Camera ' + id;
+
+                html += '<div class="cam" onclick="window.open(\'' + imgUrl + '\', \'_blank\')">';
+                html += '<img src="' + imgUrl + '" alt="' + location + '" onerror="this.style.display=\'none\'">';
+                html += '<p>📷 ' + location + '</p>';
+                html += '</div>';
+            }
+
+            gridEl.innerHTML = html;
+        })
+        .catch(function(error) {
+            console.error('JamCam Error:', error);
+            statusEl.textContent = '🔴 Error: ' + error.message;
+            statusEl.style.color = '#f44336';
+            
+            gridEl.innerHTML = '<div class="loading">Error loading cameras.<br><br><button onclick="fetchData()" style="padding:10px 20px;background:#FF6B35;color:white;border:none;border-radius:5px;font-size:16px;cursor:pointer;">🔄 Try Again</button></div>';
+        });
+    }
+
+    fetchData();
 </script>
 
 </body>
