@@ -1,122 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JamCam - SG-JB Checkpoint Traffic</title>
-
-<meta name="google-adsense-account" content="ca-pub-YOUR_ID_HERE">
-
-<style>
-body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; padding-bottom: 80px; }
-
-.top { background: #FF6B35; color: white; padding: 20px; text-align: center; }
-.top h1 { margin: 0; font-size: 26px; }
-.top p { margin: 3px 0 0; font-size: 13px; }
-
-.cameras {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 10px;
-}
-
-@media (min-width: 768px) {
-    .cameras { grid-template-columns: 1fr 1fr; }
-    .cam img { height: 500px; }
-}
-
-@media (max-width: 767px) {
-    .cam img { height: 250px; }
-}
-
-.cam {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.cam img {
-    width: 100%;
-    object-fit: cover;
-    display: block;
-    background: #e0e0e0;
-}
-
-.cam .info { padding: 8px; }
-.cam .info .loc { font-size: 13px; font-weight: bold; color: #333; }
-.cam .info .id { font-size: 11px; color: #999; }
-
-.loading { text-align: center; padding: 50px 20px; color: #666; }
-
-.spinner {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #FF6B35;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 15px;
-}
-
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-.bottom {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    padding: 10px 15px;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-    display: flex;
-    gap: 10px;
-}
-
-.btn {
-    flex: 1;
-    padding: 14px;
-    border: none;
-    border-radius: 25px;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.btn-r { background: #FF6B35; color: white; }
-.btn-s { background: #FFF5F0; color: #FF6B35; border: 2px solid #FFE0D0; }
-
-.info-note {
-    background: #FFF5F0;
-    color: #FF6B35;
-    padding: 8px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    border-bottom: 1px solid #FFE0D0;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>JamCam - SG-JB Checkpoint Traffic</title>
+    <meta name="google-adsense-account" content="ca-pub-YOUR_ID_HERE">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+            margin: 0; 
+            background: #f0f0f0; 
+            padding-bottom: 80px; 
+        }
+        
+        .top { 
+            background: #FF6B35; 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+        }
+        
+        .top h1 { 
+            margin: 0; 
+            font-size: 26px; 
+        }
+        
+        .top p { 
+            margin: 3px 0 0; 
+            font-size: 13px; 
+        }
+        
+        /* Mobile: 1 column */
+        .cameras { 
+            display: grid; 
+            grid-template-columns: 1fr;
+            gap: 12px; 
+            padding: 12px; 
+        }
+        
+        /* Desktop: 2 columns */
+        @media (min-width: 768px) {
+            .cameras { 
+                grid-template-columns: 1fr 1fr;
+            }
+            .cam img { 
+                height: 500px;
+            }
+        }
+        
+        /* Mobile image height */
+        @media (max-width: 767px) {
+            .cam img { 
+                height: 280px;
+            }
+        }
+        
+        .cam { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            cursor: pointer; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .cam:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .cam img { 
+            width: 100%; 
+            object-fit: cover; 
+            display: block; 
+            background: #e0e0e0; 
+        }
+        
+        .cam .info { 
+            padding: 10px; 
+        }
+        
+        .cam .info .loc { 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 4px;
+        }
+        
+        .cam .info .id { 
+            font-size: 10px; 
+            color: #999; 
+        }
+        
+        .cam .info .wait-time {
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        
+        .loading { 
+            text-align: center; 
+            padding: 50px 20px; 
+            color: #666; 
+        }
+        
+        .spinner { 
+            border: 3px solid #f3f3f3; 
+            border-top: 3px solid #FF6B35; 
+            border-radius: 50%; 
+            width: 40px; 
+            height: 40px; 
+            animation: spin 1s linear infinite; 
+            margin: 0 auto 15px; 
+        }
+        
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        
+        .bottom { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: white; 
+            padding: 10px 15px; 
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); 
+            display: flex; 
+            gap: 10px; 
+        }
+        
+        .btn { 
+            flex: 1; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 25px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: opacity 0.2s;
+        }
+        
+        .btn:active {
+            opacity: 0.8;
+        }
+        
+        .btn-r { 
+            background: #FF6B35; 
+            color: white; 
+        }
+        
+        .btn-s { 
+            background: #FFF5F0; 
+            color: #FF6B35; 
+            border: 2px solid #FFE0D0; 
+        }
+        
+        .error-box { 
+            background: #FFF3F0; 
+            border: 2px solid #FF6B35; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin: 20px 10px; 
+            text-align: center; 
+        }
+        
+        .error-box button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 25px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin-top: 10px; 
+        }
+        
+        .info-note { 
+            background: #FFF5F0; 
+            color: #FF6B35; 
+            padding: 8px; 
+            text-align: center; 
+            font-size: 12px; 
+            font-weight: bold; 
+            border-bottom: 1px solid #FFE0D0; 
+        }
+        
+        /* Traffic badge */
+        .traffic-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Sponsored badge */
+        .sponsored-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.7);
+            color: gold;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: bold;
+            z-index: 1;
+        }
+        
+        .sponsored-cam {
+            border: 2px solid #FFD700;
+            position: relative;
+        }
+        
+        /* Premium upsell */
+        .premium-upsell {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            margin: 10px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .premium-upsell:active {
+            transform: scale(0.98);
+        }
+        
+        .status-text {
+            font-size: 11px;
+            margin-top: 5px;
+        }
+        
+        /* Ad container */
+        .ad-container { 
+            text-align: center; 
+            margin: 10px; 
+            padding: 10px; 
+            background: #f9f9f9;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #999;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="top">
     <h1>📷 JamCam</h1>
-    <p>SG-JB Checkpoint Traffic</p>
-    <p id="statusText">Loading...</p>
+    <p>SG-JB Checkpoint Traffic | Beat the jam, check the cam</p>
+    <p id="statusText" class="status-text" style="color: #CCFFCC;">Starting up...</p>
 </div>
 
 <div class="info-note">
-    🚗 Woodlands & Tuas Second Link Live Cameras
+    🚗 Live traffic updates for Woodlands Causeway & Tuas Second Link
+</div>
+
+<!-- Banner Ad -->
+<div class="ad-container" id="bannerAd">
+    <div style="font-size:10px; text-transform:uppercase;">Advertisement</div>
+    <div style="padding: 20px; background: #e0e0e0; border-radius: 8px;">
+        [Ad Space - Sign up with Google AdSense]
+    </div>
 </div>
 
 <div class="cameras" id="cameraGrid">
-    <div class="loading">
-        <div class="spinner"></div>
-        Loading checkpoint cameras...
-    </div>
+    <div class="loading"><div class="spinner"></div>Loading checkpoint cameras...</div>
+</div>
+
+<!-- Premium Upsell -->
+<div class="premium-upsell" id="premiumUpsell" onclick="showPremiumPrompt()">
+    ⭐ Go Premium - No Ads + Traffic Alerts ⭐<br>
+    <span style="font-size:11px;">$2.99/month | Cancel anytime</span>
 </div>
 
 <div class="bottom">
@@ -125,92 +293,183 @@ body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; padding-b
 </div>
 
 <script>
-const API_URL = '/api/traffic';
+    var API_URL = '/api/traffic';
+    var allCameras = [];
+    var refreshCount = 0;
+    var isPremium = localStorage.getItem('jamcam_premium') === 'true';
 
-let lastData = null;
-
-function setStatus(text) {
-    document.getElementById('statusText').innerText = text;
-}
-
-async function loadCameras() {
-    const grid = document.getElementById('cameraGrid');
-
-    grid.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            Checking traffic...
-        </div>
-    `;
-
-    setStatus("Connecting...");
-
-    try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error("HTTP " + res.status);
-
-        const data = await res.json();
-        lastData = data;
-
-        const cams = data?.value || [];
-
-        if (!cams.length) {
-            grid.innerHTML = "<div class='loading'>No cameras found</div>";
-            setStatus("No data");
-            return;
+    // Show/hide ads based on premium status
+    function updateAds() {
+        if (isPremium) {
+            var bannerAd = document.getElementById('bannerAd');
+            var premiumUpsell = document.getElementById('premiumUpsell');
+            if (bannerAd) bannerAd.style.display = 'none';
+            if (premiumUpsell) premiumUpsell.style.display = 'none';
         }
-
-        renderCameras(cams, data);
-    } catch (err) {
-        grid.innerHTML = "<div class='loading'>Failed to load</div>";
-        setStatus("Error: " + err.message);
     }
-}
 
-function renderCameras(cams, meta) {
-    const grid = document.getElementById('cameraGrid');
+    function loadCameras() {
+        var grid = document.getElementById('cameraGrid');
+        var status = document.getElementById('statusText');
+        
+        grid.innerHTML = '<div class="loading"><div class="spinner"></div>Checking checkpoint traffic...</div>';
+        status.textContent = 'Connecting to LTA...';
+        status.style.color = 'white';
 
-    let html = "";
-
-    cams.forEach(cam => {
-        const id = cam.id;
-        const img = cam.image;
-        const loc = cam.location;
-
-        const freshImg = img + "?t=" + Date.now();
-
-        html += `
-            <div class="cam" onclick="window.open('${img}','_blank')">
-                <img src="${freshImg}" loading="lazy">
-                <div class="info">
-                    <div class="loc">📷 ${loc}</div>
-                    <div class="id">ID: ${id}</div>
-                </div>
-            </div>
-        `;
-    });
-
-    grid.innerHTML = html;
-
-    const time = new Date().toLocaleTimeString('en-SG');
-    const cacheText = meta.cached ? " (cached)" : " (live)";
-
-    setStatus(`🟢 ${cams.length} cams • ${time}${cacheText}`);
-}
-
-function shareApp() {
-    const msg = "🚗 Check SG-JB traffic live: " + window.location.href;
-
-    if (navigator.share) {
-        navigator.share({ title: "JamCam", text: msg });
-    } else {
-        navigator.clipboard.writeText(msg);
-        alert("Copied!");
+        fetch(API_URL)
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('Camera data received:', data);
+                
+                if (data && data.value && data.value.length > 0) {
+                    allCameras = data.value;
+                    var now = new Date();
+                    var timeStr = now.toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+                    status.textContent = '🟢 ' + allCameras.length + ' checkpoint cams | Last update: ' + timeStr;
+                    status.style.color = '#CCFFCC';
+                    displayCameras();
+                    
+                    // Show interstitial ad every 5 refreshes for free users
+                    refreshCount++;
+                    if (!isPremium && refreshCount % 5 === 0) {
+                        showInterstitialAd();
+                    }
+                } else {
+                    showError('No checkpoint camera data received');
+                }
+            })
+            .catch(function(error) {
+                console.error('Fetch error:', error);
+                showError('Cannot connect: ' + error.message);
+            });
     }
-}
-
-loadCameras();
-setInterval(loadCameras, 15000);
+    
+    function showError(msg) {
+        var grid = document.getElementById('cameraGrid');
+        var status = document.getElementById('statusText');
+        
+        status.textContent = '🔴 ' + msg;
+        status.style.color = '#FFCCCC';
+        
+        grid.innerHTML = 
+            '<div class="error-box">' +
+            '<div style="font-size:40px;margin-bottom:10px;">📡</div>' +
+            '<strong>Cannot Load Checkpoint Cameras</strong><br><br>' +
+            msg + '<br><br>' +
+            '<button onclick="loadCameras()">🔄 Try Again</button>' +
+            '</div>';
+    }
+    
+    function displayCameras() {
+        var grid = document.getElementById('cameraGrid');
+        var html = '';
+        
+        for (var i = 0; i < allCameras.length; i++) {
+            var cam = allCameras[i];
+            var id = cam.CameraID;
+            var imgUrl = cam.ImageLink;
+            var location = cam.Location || 'Checkpoint Camera ' + id;
+            var trafficStatus = cam.trafficStatus || { status: '🟢 LIGHT', color: '#27ae60', level: 'light' };
+            var waitTime = cam.waitTime || '5-10 min';
+            
+            var imgWithTimestamp = imgUrl + '?t=' + Date.now();
+            
+            // Set border color based on traffic
+            var borderColor = trafficStatus.color;
+            var badgeText = trafficStatus.status;
+            
+            // Make first camera sponsored for free users
+            var isSponsored = (i === 0 && !isPremium);
+            var camClass = isSponsored ? 'cam sponsored-cam' : 'cam';
+            
+            html += '<div class="' + camClass + '" onclick="window.open(\'' + imgUrl + '\', \'_blank\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
+            html += '<div class="traffic-badge" style="background: ' + borderColor + '; color: white;">' + badgeText + '</div>';
+            if (isSponsored) {
+                html += '<div class="sponsored-badge">⭐ Sponsored</div>';
+            }
+            html += '<img src="' + imgWithTimestamp + '" alt="' + location + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x500?text=Loading+Failed\'">';
+            html += '<div class="info">';
+            html += '<div class="loc">📷 ' + location + '</div>';
+            html += '<div class="id">Camera ID: ' + id + '</div>';
+            html += '<div class="wait-time" style="color: ' + borderColor + ';">⏱️ Estimated wait: ' + waitTime + '</div>';
+            html += '</div></div>';
+        }
+        
+        if (html === '') {
+            html = '<div class="error-box">No checkpoint cameras found. Please check back later.</div>';
+        }
+        
+        grid.innerHTML = html;
+    }
+    
+    function showInterstitialAd() {
+        var adHtml = document.createElement('div');
+        adHtml.style.position = 'fixed';
+        adHtml.style.top = '0';
+        adHtml.style.left = '0';
+        adHtml.style.width = '100%';
+        adHtml.style.height = '100%';
+        adHtml.style.background = 'rgba(0,0,0,0.95)';
+        adHtml.style.zIndex = '9999';
+        adHtml.style.display = 'flex';
+        adHtml.style.flexDirection = 'column';
+        adHtml.style.justifyContent = 'center';
+        adHtml.style.alignItems = 'center';
+        adHtml.innerHTML = 
+            '<div style="background:white; padding:25px; border-radius:20px; text-align:center; max-width:320px; margin:20px;">' +
+            '<div style="font-size:12px; color:#999; margin-bottom:10px;">Advertisement</div>' +
+            '<div style="margin:20px 0; font-size:14px; line-height:1.5;">🚗 Support JamCam<br>Keep it free for everyone!</div>' +
+            '<button onclick="closeAd(this)" style="background:#FF6B35; color:white; border:none; padding:12px 24px; border-radius:25px; margin-top:10px; font-size:14px; font-weight:bold;">✖️ Close Ad</button>' +
+            '<button onclick="showPremiumPrompt(); closeAd(this);" style="background:#667eea; color:white; border:none; padding:12px 24px; border-radius:25px; margin-top:10px; margin-left:10px; font-size:14px; font-weight:bold;">⭐ Go Premium</button>' +
+            '</div>';
+        document.body.appendChild(adHtml);
+    }
+    
+    function closeAd(element) {
+        var adDiv = element.closest('div[style*="position: fixed"]');
+        if (adDiv) adDiv.remove();
+    }
+    
+    function showPremiumPrompt() {
+        var message = '🎯 JamCam Premium Features\n\n' +
+                      '✅ No ads ever\n' +
+                      '✅ Real-time traffic predictions\n' +
+                      '✅ Push notifications for jams\n' +
+                      '✅ Save favorite cameras\n' +
+                      '✅ 5-minute refresh intervals\n\n' +
+                      '💰 Only $2.99/month\n' +
+                      '💰 $19.99/year (Save 45%)\n\n' +
+                      '📧 Contact: jamcam@example.com for payment details\n\n' +
+                      '💳 Stripe/PayPal coming soon!';
+        
+        alert(message);
+        // In production, integrate with Stripe/PayPal
+    }
+    
+    function shareApp() {
+        var message = '🚗 Beat the jam at SG-JB checkpoints!\n\nJamCam - Live traffic cameras with wait time estimates\nWoodlands Causeway & Tuas Second Link\n\n' + window.location.href;
+        if (navigator.share) {
+            navigator.share({title:'JamCam - Checkpoint Traffic', text:message, url:window.location.href}).catch(function(){});
+        } else {
+            var textarea = document.createElement('textarea');
+            textarea.value = message;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('✅ Link copied to clipboard!');
+        }
+    }
+    
+    // Initialize
+    updateAds();
+    setInterval(loadCameras, 120000);
+    loadCameras();
 </script>
 
 </body>
