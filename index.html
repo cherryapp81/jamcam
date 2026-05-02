@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>JamCam - SG-JB Checkpoint Traffic</title>
-    <meta name="google-adsense-account" content="ca-pub-YOUR_ID_HERE">
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
@@ -24,15 +21,8 @@
             text-align: center; 
         }
         
-        .top h1 { 
-            margin: 0; 
-            font-size: 26px; 
-        }
-        
-        .top p { 
-            margin: 3px 0 0; 
-            font-size: 13px; 
-        }
+        .top h1 { margin: 0; font-size: 26px; }
+        .top p { margin: 3px 0 0; font-size: 13px; }
         
         /* Map Containers */
         .map-container {
@@ -54,9 +44,7 @@
             gap: 8px;
         }
         
-        .map-header span {
-            font-size: 18px;
-        }
+        .map-header span { font-size: 18px; }
         
         iframe {
             display: block;
@@ -88,9 +76,7 @@
             gap: 8px;
         }
         
-        .section-header span {
-            font-size: 20px;
-        }
+        .section-header span { font-size: 20px; }
         
         /* Mobile: 1 column */
         .cameras { 
@@ -105,16 +91,11 @@
             .cameras { 
                 grid-template-columns: 1fr 1fr;
             }
-            .cam img { 
-                height: 350px;
-            }
+            .cam img { height: 350px; }
         }
         
-        /* Mobile image height */
         @media (max-width: 767px) {
-            .cam img { 
-                height: 250px;
-            }
+            .cam img { height: 250px; }
         }
         
         .cam { 
@@ -123,13 +104,10 @@
             overflow: hidden; 
             cursor: pointer; 
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
         
-        .cam:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
+        .cam:hover { transform: translateY(-2px); }
         
         .cam img { 
             width: 100%; 
@@ -138,33 +116,12 @@
             background: #e0e0e0; 
         }
         
-        .cam .info { 
-            padding: 10px; 
-        }
+        .cam .info { padding: 10px; }
+        .cam .info .loc { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 4px; }
+        .cam .info .id { font-size: 10px; color: #999; }
+        .cam .info .wait-time { font-size: 12px; margin-top: 5px; font-weight: bold; }
         
-        .cam .info .loc { 
-            font-size: 13px; 
-            font-weight: bold; 
-            color: #333; 
-            margin-bottom: 4px;
-        }
-        
-        .cam .info .id { 
-            font-size: 10px; 
-            color: #999; 
-        }
-        
-        .cam .info .wait-time {
-            font-size: 12px;
-            margin-top: 5px;
-            font-weight: bold;
-        }
-        
-        .loading { 
-            text-align: center; 
-            padding: 50px 20px; 
-            color: #666; 
-        }
+        .loading { text-align: center; padding: 50px 20px; color: #666; }
         
         .spinner { 
             border: 3px solid #f3f3f3; 
@@ -202,23 +159,10 @@
             font-size: 15px; 
             font-weight: 700; 
             cursor: pointer; 
-            transition: opacity 0.2s;
         }
         
-        .btn:active {
-            opacity: 0.8;
-        }
-        
-        .btn-r { 
-            background: #FF6B35; 
-            color: white; 
-        }
-        
-        .btn-s { 
-            background: #FFF5F0; 
-            color: #FF6B35; 
-            border: 2px solid #FFE0D0; 
-        }
+        .btn-r { background: #FF6B35; color: white; }
+        .btn-s { background: #FFF5F0; color: #FF6B35; border: 2px solid #FFE0D0; }
         
         .error-box { 
             background: #FFF3F0; 
@@ -251,7 +195,6 @@
             border-bottom: 1px solid #FFE0D0; 
         }
         
-        /* Traffic badge */
         .traffic-badge {
             position: absolute;
             top: 8px;
@@ -264,27 +207,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        /* Sponsored badge */
-        .sponsored-badge {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.7);
-            color: gold;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 10px;
-            font-weight: bold;
-            z-index: 1;
-        }
+        .status-text { font-size: 11px; margin-top: 5px; }
         
-        .sponsored-cam {
-            border: 2px solid #FFD700;
-            position: relative;
-        }
-        
-          
-        /* Ad container */
         .ad-container { 
             text-align: center; 
             margin: 10px; 
@@ -295,12 +219,8 @@
             color: #999;
         }
         
-        /* Section divider */
-        .section-divider {
-            margin: 5px 0;
-        }
+        .section-divider { margin: 5px 0; }
         
-        /* Traffic Legend */
         .traffic-legend {
             display: flex;
             justify-content: center;
@@ -329,27 +249,20 @@
     🚗 Live camera feeds for Woodlands Causeway & Tuas Second Link
 </div>
 
-<!-- Banner Ad -->
-<div class="ad-container" id="bannerAd">
+<!-- Ad Space (Add AdSense code here after approval) -->
+<div class="ad-container" id="adSpace">
     <div style="font-size:10px; text-transform:uppercase;">Advertisement</div>
     <div style="padding: 20px; background: #e0e0e0; border-radius: 8px;">
-        [Ad Space - Sign up with Google AdSense]
+        [Ad Space - Google AdSense coming soon]
     </div>
 </div>
 
 <div id="cameraGrid"></div>
 
-<!-- Traffic Legend -->
 <div class="traffic-legend">
     <span><span class="legend-color" style="background:#4CAF50;"></span> Smooth</span>
     <span><span class="legend-color" style="background:#FF9800;"></span> Moderate</span>
     <span><span class="legend-color" style="background:#f44336;"></span> Heavy</span>
-</div>
-
-<!-- Premium Upsell -->
-<div class="premium-upsell" id="premiumUpsell" onclick="showPremiumPrompt()">
-    ⭐ Go Premium - No Ads + Traffic Alerts ⭐<br>
-    <span style="font-size:11px;">$2.99/month | Cancel anytime</span>
 </div>
 
 <div class="bottom">
@@ -362,18 +275,6 @@
     var allCameras = [];
     var woodlandsCameras = [];
     var tuasCameras = [];
-    var refreshCount = 0;
-    var isPremium = localStorage.getItem('jamcam_premium') === 'true';
-
-    // Show/hide ads based on premium status
-    function updateAds() {
-        if (isPremium) {
-            var bannerAd = document.getElementById('bannerAd');
-            var premiumUpsell = document.getElementById('premiumUpsell');
-            if (bannerAd) bannerAd.style.display = 'none';
-            if (premiumUpsell) premiumUpsell.style.display = 'none';
-        }
-    }
 
     function loadCameras() {
         var status = document.getElementById('statusText');
@@ -384,18 +285,13 @@
 
         fetch(API_URL)
             .then(function(response) {
-                if (!response.ok) {
-                    throw new Error('HTTP ' + response.status);
-                }
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 return response.json();
             })
             .then(function(data) {
-                console.log('Camera data received:', data);
-                
                 if (data && data.value && data.value.length > 0) {
                     allCameras = data.value;
                     
-                    // Separate Woodlands and Tuas cameras
                     woodlandsCameras = allCameras.filter(cam => 
                         cam.CameraID === '2701' || cam.CameraID === '2702' || cam.CameraID === '2705'
                     );
@@ -409,18 +305,11 @@
                     status.textContent = '🟢 ' + totalCams + ' checkpoint cams | Last update: ' + timeStr;
                     status.style.color = '#CCFFCC';
                     displayCameras();
-                    
-                    // Show interstitial ad every 5 refreshes for free users
-                    refreshCount++;
-                    if (!isPremium && refreshCount % 5 === 0) {
-                        showInterstitialAd();
-                    }
                 } else {
                     showError('No checkpoint camera data received');
                 }
             })
             .catch(function(error) {
-                console.error('Fetch error:', error);
                 showError('Cannot connect: ' + error.message);
             });
     }
@@ -441,14 +330,14 @@
             '</div>';
     }
     
-    function renderCameraSection(title, icon, cameras, startIndex) {
+    function renderCameraSection(title, icon, cameras) {
         if (!cameras || cameras.length === 0) {
             return '<div class="section-header" style="background: #95a5a6;">' +
                    '<span>' + icon + '</span>' +
                    '<span>' + title + '</span>' +
                    '<span style="font-size:12px; margin-left:auto;">No cameras available</span>' +
                    '</div>' +
-                   '<div class="cameras" style="grid-template-columns:1fr;">' +
+                   '<div class="cameras">' +
                    '<div class="error-box" style="margin:0;">No cameras found for ' + title + '</div>' +
                    '</div>';
         }
@@ -473,15 +362,8 @@
             var borderColor = trafficStatus.color;
             var badgeText = trafficStatus.status;
             
-            // Make first camera sponsored for free users
-            var isSponsored = (startIndex + i === 0 && !isPremium);
-            var camClass = isSponsored ? 'cam sponsored-cam' : 'cam';
-            
-            html += '<div class="' + camClass + '" onclick="window.open(\'' + imgUrl + '\', \'_blank\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
+            html += '<div class="cam" onclick="window.open(\'' + imgUrl + '\', \'_blank\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
             html += '<div class="traffic-badge" style="background: ' + borderColor + '; color: white;">' + badgeText + '</div>';
-            if (isSponsored) {
-                html += '<div class="sponsored-badge">⭐ Sponsored</div>';
-            }
             html += '<img src="' + imgWithTimestamp + '" alt="' + location + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x350?text=Loading+Failed\'">';
             html += '<div class="info">';
             html += '<div class="loc">📷 ' + location + '</div>';
@@ -495,36 +377,23 @@
     }
     
     function renderMapSection(title, icon, lat, lng, zoomLevel) {
-        // CORRECTED OneMap Minimap URL - NO 'layers' parameter!
         var mapUrl = 'https://www.onemap.gov.sg/minimap?lat=' + lat + '&lng=' + lng + '&zoom=' + zoomLevel;
         
         return '<div class="map-container">' +
                '<div class="map-header">' +
                '<span>' + icon + '</span>' + title + ' Location Map' +
                '</div>' +
-               '<iframe ' +
-               'src="' + mapUrl + '" ' +
-               'width="100%" ' +
-               'height="300" ' +
-               'style="border:0;" ' +
-               'frameborder="0" ' +
-               'allowfullscreen>' +
-               '</iframe>' +
-               '<div class="map-info">' +
-               '📍 ' + title + ' Area | Click map for more details' +
-               '</div>' +
+               '<iframe src="' + mapUrl + '" width="100%" height="300" style="border:0;" frameborder="0" allowfullscreen></iframe>' +
+               '<div class="map-info">📍 ' + title + ' Area | Map by OneMap Singapore</div>' +
                '</div>';
     }
     
     function displayCameras() {
         var grid = document.getElementById('cameraGrid');
         
-        // Woodlands Section with its map immediately after
-        var woodlandsSection = renderCameraSection('Woodlands Checkpoint', '🏢', woodlandsCameras, 0);
+        var woodlandsSection = renderCameraSection('Woodlands Checkpoint', '🏢', woodlandsCameras);
         var woodlandsMap = renderMapSection('Woodlands Checkpoint', '🏢', 1.444, 103.768, 14);
-        
-        // Tuas Section with its map immediately after
-        var tuasSection = renderCameraSection('Tuas Checkpoint', '🌉', tuasCameras, woodlandsCameras.length);
+        var tuasSection = renderCameraSection('Tuas Checkpoint', '🌉', tuasCameras);
         var tuasMap = renderMapSection('Tuas Checkpoint', '🌉', 1.347, 103.633, 14);
         
         if (woodlandsCameras.length === 0 && tuasCameras.length === 0) {
@@ -532,49 +401,6 @@
         } else {
             grid.innerHTML = woodlandsSection + woodlandsMap + '<div class="section-divider"></div>' + tuasSection + tuasMap;
         }
-    }
-    
-    function showInterstitialAd() {
-        var adHtml = document.createElement('div');
-        adHtml.style.position = 'fixed';
-        adHtml.style.top = '0';
-        adHtml.style.left = '0';
-        adHtml.style.width = '100%';
-        adHtml.style.height = '100%';
-        adHtml.style.background = 'rgba(0,0,0,0.95)';
-        adHtml.style.zIndex = '9999';
-        adHtml.style.display = 'flex';
-        adHtml.style.flexDirection = 'column';
-        adHtml.style.justifyContent = 'center';
-        adHtml.style.alignItems = 'center';
-        adHtml.innerHTML = 
-            '<div style="background:white; padding:25px; border-radius:20px; text-align:center; max-width:320px; margin:20px;">' +
-            '<div style="font-size:12px; color:#999; margin-bottom:10px;">Advertisement</div>' +
-            '<div style="margin:20px 0; font-size:14px; line-height:1.5;">🚗 Support JamCam<br>Keep it free for everyone!</div>' +
-            '<button onclick="closeAd(this)" style="background:#FF6B35; color:white; border:none; padding:12px 24px; border-radius:25px; margin-top:10px; font-size:14px; font-weight:bold;">✖️ Close Ad</button>' +
-            '<button onclick="showPremiumPrompt(); closeAd(this);" style="background:#667eea; color:white; border:none; padding:12px 24px; border-radius:25px; margin-top:10px; margin-left:10px; font-size:14px; font-weight:bold;">⭐ Go Premium</button>' +
-            '</div>';
-        document.body.appendChild(adHtml);
-    }
-    
-    function closeAd(element) {
-        var adDiv = element.closest('div[style*="position: fixed"]');
-        if (adDiv) adDiv.remove();
-    }
-    
-    function showPremiumPrompt() {
-        var message = '🎯 JamCam Premium Features\n\n' +
-                      '✅ No ads ever\n' +
-                      '✅ Real-time traffic predictions\n' +
-                      '✅ Push notifications for jams\n' +
-                      '✅ Save favorite cameras\n' +
-                      '✅ 5-minute refresh intervals\n\n' +
-                      '💰 Only $2.99/month\n' +
-                      '💰 $19.99/year (Save 45%)\n\n' +
-                      '📧 Contact: jamcam.app@gmail.com for payment details\n\n' +
-                      '💳 Stripe/PayPal coming soon!';
-        
-        alert(message);
     }
     
     function shareApp() {
@@ -592,18 +418,17 @@
         }
     }
     
-    // Initialize
-    updateAds();
+    // Auto-refresh every 2 minutes
     setInterval(loadCameras, 120000);
     loadCameras();
 </script>
 
-<!-- Footer with copyright and links -->
+<!-- Footer -->
 <div style="text-align: center; padding: 15px; font-size: 11px; color: #999; background: white; margin-top: 10px;">
     <a href="/privacy.html" style="color: #999; margin: 0 8px; text-decoration: none;">Privacy</a> |
-    <a href="/about.html" style="color: #999; margin: 0 8px; text-decoration: none;">About</a> |
-    <span style="color: #999;">© 2025 JamCam</span>
-</div>
+    <a href="/contact.html" style="color: #999; margin: 0 8px; text-decoration: none;">Contact</a> |
+    <a href="/about.html" style="color: #999; margin: 0 8px; text-decoration: none;">About</a>
+    <div style="margin-top: 8px;">© 2025 JamCam. All rights reserved.</div>
 </div>
 
 </body>
