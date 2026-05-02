@@ -34,6 +34,24 @@
             font-size: 13px; 
         }
         
+        /* Section Headers */
+        .section-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            padding: 12px 16px;
+            margin: 10px 10px 5px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-header span {
+            font-size: 20px;
+        }
+        
         /* Mobile: 1 column */
         .cameras { 
             display: grid; 
@@ -48,14 +66,14 @@
                 grid-template-columns: 1fr 1fr;
             }
             .cam img { 
-                height: 500px;
+                height: 350px;
             }
         }
         
         /* Mobile image height */
         @media (max-width: 767px) {
             .cam img { 
-                height: 280px;
+                height: 250px;
             }
         }
         
@@ -133,6 +151,7 @@
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1); 
             display: flex; 
             gap: 10px; 
+            z-index: 100;
         }
         
         .btn { 
@@ -255,6 +274,11 @@
             font-size: 11px;
             color: #999;
         }
+        
+        /* Section divider */
+        .section-divider {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -277,7 +301,7 @@
     </div>
 </div>
 
-<div class="cameras" id="cameraGrid">
+<div id="cameraGrid">
     <div class="loading"><div class="spinner"></div>Loading checkpoint cameras...</div>
 </div>
 
@@ -295,6 +319,8 @@
 <script>
     var API_URL = '/api/traffic';
     var allCameras = [];
+    var woodlandsCameras = [];
+    var tuasCameras = [];
     var refreshCount = 0;
     var isPremium = localStorage.getItem('jamcam_premium') === 'true';
 
@@ -309,10 +335,9 @@
     }
 
     function loadCameras() {
-        var grid = document.getElementById('cameraGrid');
         var status = document.getElementById('statusText');
         
-        grid.innerHTML = '<div class="loading"><div class="spinner"></div>Checking checkpoint traffic...</div>';
+        document.getElementById('cameraGrid').innerHTML = '<div class="loading"><div class="spinner"></div>Checking checkpoint traffic...</div>';
         status.textContent = 'Connecting to LTA...';
         status.style.color = 'white';
 
@@ -328,9 +353,19 @@
                 
                 if (data && data.value && data.value.length > 0) {
                     allCameras = data.value;
+                    
+                    // Separate Woodlands and Tuas cameras
+                    woodlandsCameras = allCameras.filter(cam => 
+                        cam.CameraID === '2701' || cam.CameraID === '2702' || cam.CameraID === '2705'
+                    );
+                    tuasCameras = allCameras.filter(cam => 
+                        cam.CameraID === '4713' || cam.CameraID === '4703' || cam.CameraID === '4701'
+                    );
+                    
                     var now = new Date();
                     var timeStr = now.toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-                    status.textContent = '🟢 ' + allCameras.length + ' checkpoint cams | Last update: ' + timeStr;
+                    var totalCams = woodlandsCameras.length + tuasCameras.length;
+                    status.textContent = '🟢 ' + totalCams + ' checkpoint cams | Last update: ' + timeStr;
                     status.style.color = '#CCFFCC';
                     displayCameras();
                     
@@ -365,26 +400,40 @@
             '</div>';
     }
     
-    function displayCameras() {
-        var grid = document.getElementById('cameraGrid');
-        var html = '';
+    function renderCameraSection(title, icon, cameras, startIndex) {
+        if (!cameras || cameras.length === 0) {
+            return '<div class="section-header" style="background: #95a5a6;">' +
+                   '<span>' + icon + '</span>' +
+                   '<span>' + title + '</span>' +
+                   '<span style="font-size:12px; margin-left:auto;">No cameras available</span>' +
+                   '</div>' +
+                   '<div class="cameras" style="grid-template-columns:1fr;">' +
+                   '<div class="error-box" style="margin:0;">No cameras found for ' + title + '</div>' +
+                   '</div>';
+        }
         
-        for (var i = 0; i < allCameras.length; i++) {
-            var cam = allCameras[i];
+        var html = '<div class="section-header">' +
+                   '<span>' + icon + '</span>' +
+                   '<span>' + title + '</span>' +
+                   '<span style="font-size:12px; margin-left:auto;">' + cameras.length + ' cameras</span>' +
+                   '</div>';
+        
+        html += '<div class="cameras">';
+        
+        for (var i = 0; i < cameras.length; i++) {
+            var cam = cameras[i];
             var id = cam.CameraID;
             var imgUrl = cam.ImageLink;
             var location = cam.Location || 'Checkpoint Camera ' + id;
-            var trafficStatus = cam.trafficStatus || { status: '🟢 LIGHT', color: '#27ae60', level: 'light' };
+            var trafficStatus = cam.trafficStatus || { status: '🟢 LIGHT TRAFFIC', color: '#27ae60', level: 'light' };
             var waitTime = cam.waitTime || '5-10 min';
             
             var imgWithTimestamp = imgUrl + '?t=' + Date.now();
-            
-            // Set border color based on traffic
             var borderColor = trafficStatus.color;
             var badgeText = trafficStatus.status;
             
             // Make first camera sponsored for free users
-            var isSponsored = (i === 0 && !isPremium);
+            var isSponsored = (startIndex + i === 0 && !isPremium);
             var camClass = isSponsored ? 'cam sponsored-cam' : 'cam';
             
             html += '<div class="' + camClass + '" onclick="window.open(\'' + imgUrl + '\', \'_blank\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
@@ -392,7 +441,7 @@
             if (isSponsored) {
                 html += '<div class="sponsored-badge">⭐ Sponsored</div>';
             }
-            html += '<img src="' + imgWithTimestamp + '" alt="' + location + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x500?text=Loading+Failed\'">';
+            html += '<img src="' + imgWithTimestamp + '" alt="' + location + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x350?text=Loading+Failed\'">';
             html += '<div class="info">';
             html += '<div class="loc">📷 ' + location + '</div>';
             html += '<div class="id">Camera ID: ' + id + '</div>';
@@ -400,11 +449,21 @@
             html += '</div></div>';
         }
         
-        if (html === '') {
-            html = '<div class="error-box">No checkpoint cameras found. Please check back later.</div>';
-        }
+        html += '</div>';
+        return html;
+    }
+    
+    function displayCameras() {
+        var grid = document.getElementById('cameraGrid');
         
-        grid.innerHTML = html;
+        var woodlandsSection = renderCameraSection('Woodlands Checkpoint', '🏢', woodlandsCameras, 0);
+        var tuasSection = renderCameraSection('Tuas Checkpoint', '🌉', tuasCameras, woodlandsCameras.length);
+        
+        if (woodlandsCameras.length === 0 && tuasCameras.length === 0) {
+            grid.innerHTML = '<div class="error-box">No checkpoint cameras found. Please check back later.</div>';
+        } else {
+            grid.innerHTML = woodlandsSection + '<div class="section-divider"></div>' + tuasSection;
+        }
     }
     
     function showInterstitialAd() {
@@ -448,7 +507,6 @@
                       '💳 Stripe/PayPal coming soon!';
         
         alert(message);
-        // In production, integrate with Stripe/PayPal
     }
     
     function shareApp() {
