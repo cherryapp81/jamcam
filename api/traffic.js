@@ -1,76 +1,87 @@
+let cache = null;
+let cacheTime = 0;
+const CACHE_DURATION = 15 * 1000; // 15 seconds (traffic cams update often)
+
+// Pre-index camera list for O(1) lookup (faster than includes)
+const CHECKPOINT_CAMERAS = {
+  '2701': '🚗 Woodlands Causeway (Towards Johor)',
+  '2702': '🇸🇬 Woodlands Checkpoint (Towards Singapore)',
+  '2704': '🔄 Woodlands Flyover (Towards Checkpoint)',
+  '4703': '🌉 Tuas Second Link (JB-SG)'
+};
+
 export default async function handler(req, res) {
-  // Enable CORS
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
-  
-  const LTA_API_URL = 'https://api.data.gov.sg/v1/transport/traffic-images';
-  const LTA_API_KEY = process.env.LTA_KEY || process.env.LTA_API_KEY;
-  
-  // ONLY these 4 checkpoint cameras
-  const CHECKPOINT_CAMERAS = ['2701', '2702', '2704', '4703'];
-  
-  if (!LTA_API_KEY) {
-    return res.status(500).json({ 
-      error: 'API key not configured in Vercel'
+
+  // ⚡ Serve from cache if valid
+  const now = Date.now();
+  if (cache && now - cacheTime < CACHE_DURATION) {
+    return res.status(200).json({
+      ...cache,
+      cached: true
     });
   }
-  
+
+  const LTA_API_URL = 'https://api.data.gov.sg/v1/transport/traffic-images';
+  const LTA_API_KEY = process.env.LTA_KEY || process.env.LTA_API_KEY;
+
+  if (!LTA_API_KEY) {
+    return res.status(500).json({
+      error: 'Missing LTA API key'
+    });
+  }
+
   try {
     const response = await fetch(LTA_API_URL, {
       method: 'GET',
       headers: {
-        'AccountKey': LTA_API_KEY,
-        'Accept': 'application/json'
+        AccountKey: LTA_API_KEY,
+        Accept: 'application/json'
       }
     });
-    
+
     if (!response.ok) {
-      throw new Error(`LTA API error: ${response.status}`);
+      throw new Error(`LTA API failed: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    
-    if (data.items && data.items[0] && data.items[0].cameras) {
-      // Get all cameras from LTA
-      const allCameras = data.items[0].cameras;
-      
-      // FILTER: Only keep the 4 checkpoint cameras
-      const checkpointCameras = allCameras
-        .filter(cam => CHECKPOINT_CAMERAS.includes(cam.camera_id))
-        .map(cam => ({
-          CameraID: cam.camera_id,
-          ImageLink: cam.image,
-          Location: getCameraLocation(cam.camera_id)
-        }));
-      
-      console.log(`Found ${checkpointCameras.length} checkpoint cameras out of ${allCameras.length} total`);
-      
-      // Return ONLY the filtered cameras
-      return res.status(200).json({ 
-        value: checkpointCameras,
-        totalCameras: checkpointCameras.length,
-        filtered: true
+
+    const cameras = data?.items?.[0]?.cameras;
+
+    if (!Array.isArray(cameras)) {
+      return res.status(404).json({
+        error: 'Invalid camera response structure'
       });
-    } else {
-      return res.status(404).json({ error: 'No camera data available from LTA' });
     }
+
+    // ⚡ Fast filter using object lookup instead of includes()
+    const checkpointCameras = cameras
+      .filter(cam => CHECKPOINT_CAMERAS[cam.camera_id])
+      .map(cam => ({
+        id: cam.camera_id,
+        image: cam.image,
+        location: CHECKPOINT_CAMERAS[cam.camera_id],
+        timestamp: cam.timestamp
+      }));
+
+    const result = {
+      value: checkpointCameras,
+      total: checkpointCameras.length,
+      updatedAt: new Date().toISOString()
+    };
+
+    // store cache
+    cache = result;
+    cacheTime = now;
+
+    return res.status(200).json(result);
+
   } catch (error) {
-    console.error('Error:', error.message);
-    return res.status(500).json({ 
-      error: 'Unable to fetch traffic camera data',
-      details: error.message
+    return res.status(500).json({
+      error: 'Traffic camera fetch failed',
+      message: error.message
     });
   }
-}
-
-// Friendly names for each checkpoint camera
-function getCameraLocation(cameraId) {
-  const locations = {
-    '2701': '🚗 Woodlands Causeway (Towards Johor)',
-    '2702': '🇸🇬 Woodlands Checkpoint (Towards Singapore)',
-    '2704': '🔄 Woodlands Flyover (Towards Checkpoint)',
-    '4703': '🌉 Tuas Second Link (JB-SG)'
-  };
-  
-  return locations[cameraId] || `Camera ${cameraId}`;
 }
