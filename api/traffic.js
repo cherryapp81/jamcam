@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   const LTA_API_KEY = process.env.LTA_KEY || process.env.LTA_API_KEY;
   
   // ONLY these 4 checkpoint cameras
-  const CHECKPOINT_CAMERAS = ['2701', '2702', '4712', '4703'];
+  const CHECKPOINT_CAMERAS = ['2701', '2702', '2704', '4703'];
   
   if (!LTA_API_KEY) {
     return res.status(500).json({ 
