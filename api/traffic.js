@@ -6,10 +6,10 @@ export default async function handler(req, res) {
   const LTA_API_URL = 'https://api.data.gov.sg/v1/transport/traffic-images';
   const LTA_API_KEY = process.env.LTA_KEY || process.env.LTA_API_KEY;
   
-  // BOTH Woodlands AND Tuas checkpoint cameras
+  // Camera IDs as requested:
   // Woodlands: 2701, 2702, 2705
-  // Tuas: 4701, 4702, 4703
-  const CHECKPOINT_CAMERAS = ['2701', '2702', '2705', '4701', '4702', '4703'];
+  // Tuas: 4713, 4703, 4701
+  const CHECKPOINT_CAMERAS = ['2701', '2702', '2705', '4713', '4703', '4701'];
   
   if (!LTA_API_KEY) {
     return res.status(500).json({ 
@@ -74,9 +74,9 @@ function getCameraLocation(cameraId) {
     '2705': '🔄 Woodlands Causeway (Midpoint)',
     
     // Tuas Cameras
-    '4701': '🚛 Tuas Checkpoint (Departure to JB)',
-    '4702': '🇸🇬 Tuas Checkpoint (Arrival to Singapore)',
-    '4703': '🌉 Tuas Second Link (Main Crossing)'
+    '4713': '🚛 Tuas Checkpoint (Departure to JB)',
+    '4703': '🌉 Tuas Second Link (Main Crossing)',
+    '4701': '🇸🇬 Tuas Checkpoint (Arrival to Singapore)'
   };
   return locations[cameraId] || `Camera ${cameraId}`;
 }
@@ -109,15 +109,20 @@ function getTrafficStatus(cameraId, timestamp) {
     return { status: '🟢 LIGHT TRAFFIC', color: '#27ae60', level: 'light' };
   }
   
+  // Woodlands Midpoint (2705)
+  if (cameraId === '2705') {
+    if (isMorningPeak || isEveningPeak) return { status: '🟠 MODERATE TRAFFIC', color: '#f39c12', level: 'moderate' };
+    return { status: '🟢 SMOOTH', color: '#27ae60', level: 'light' };
+  }
+  
   // Tuas Cameras
-  if (cameraId === '4701' || cameraId === '4702' || cameraId === '4703') {
+  if (cameraId === '4701' || cameraId === '4713') {
     if (isMorningPeak || isEveningPeak) return { status: '🟠 MODERATE TRAFFIC', color: '#f39c12', level: 'moderate' };
     if (isNight) return { status: '🟢 LIGHT TRAFFIC', color: '#27ae60', level: 'light' };
     return { status: '🟢 SMOOTH', color: '#27ae60', level: 'light' };
   }
   
-  // Woodlands Midpoint
-  if (cameraId === '2705') {
+  if (cameraId === '4703') {
     if (isMorningPeak || isEveningPeak) return { status: '🟠 MODERATE TRAFFIC', color: '#f39c12', level: 'moderate' };
     return { status: '🟢 SMOOTH', color: '#27ae60', level: 'light' };
   }
@@ -152,20 +157,20 @@ function getWaitTimeEstimate(cameraId, timestamp) {
     return '5-15 min';
   }
   
+  // Woodlands Midpoint (2705)
+  if (cameraId === '2705') {
+    if (isMorningPeak || isEveningPeak) return '10-15 min';
+    return '5 min';
+  }
+  
   // Tuas Cameras
-  if (cameraId === '4701' || cameraId === '4702') {
+  if (cameraId === '4701' || cameraId === '4713') {
     if (isMorningPeak || isEveningPeak) return '10-15 min';
     return '5-10 min';
   }
   
   if (cameraId === '4703') {
     if (isMorningPeak || isEveningPeak) return '5-10 min';
-    return '5 min';
-  }
-  
-  // Woodlands Midpoint
-  if (cameraId === '2705') {
-    if (isMorningPeak || isEveningPeak) return '10-15 min';
     return '5 min';
   }
   
