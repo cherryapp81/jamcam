@@ -44,8 +44,8 @@
 </div>
 
 <script>
+    // This calls your Vercel serverless function (create api/traffic.js)
     var API_URL = '/api/traffic';
-    var API_KEY = '...';
     
     var allCameras = [];
 
@@ -57,45 +57,37 @@
         status.textContent = 'Connecting...';
         status.style.color = 'white';
 
-        // Use XMLHttpRequest instead of fetch - sometimes bypasses CORS issues
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', API_URL, true);
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.timeout = 15000;
-        
-        xhr.onload = function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                try {
-                    var data = JSON.parse(xhr.responseText);
-                    console.log('✅ JamCam: Got data!');
-                    
-                    if (data && data.value) {
-                        allCameras = data.value;
-                        var now = new Date();
-                        var t = now.toLocaleTimeString('en-SG', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-                        status.textContent = '🟢 Live - ' + allCameras.length + ' cameras | ' + t;
-                        status.style.color = '#CCFFCC';
-                        showCameras();
-                    } else {
-                        showError('No data from LTA');
-                    }
-                } catch(e) {
-                    showError('Parse error: ' + e.message);
-                }
-            } else {
-                showError('LTA error: HTTP ' + xhr.status);
+        // Use fetch for cleaner code
+        fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
             }
-        };
-        
-        xhr.onerror = function() {
-            showError('Network error. Check your connection.');
-        };
-        
-        xhr.ontimeout = function() {
-            showError('LTA server took too long to respond.');
-        };
-        
-        xhr.send();
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('✅ JamCam: Got data!', data);
+            
+            if (data && data.value && data.value.length > 0) {
+                allCameras = data.value;
+                var now = new Date();
+                var t = now.toLocaleTimeString('en-SG', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+                status.textContent = '🟢 Live - ' + allCameras.length + ' cameras | ' + t;
+                status.style.color = '#CCFFCC';
+                showCameras();
+            } else {
+                showError('No camera data received from LTA');
+            }
+        })
+        .catch(function(error) {
+            console.error('Fetch error:', error);
+            showError('Cannot connect: ' + error.message);
+        });
     }
     
     function showError(msg) {
@@ -124,8 +116,11 @@
             var img = cam.ImageLink;
             var loc = cam.Location || 'Camera ' + id;
             
+            // Add timestamp to prevent caching
+            var imgWithTimestamp = img + '?t=' + Date.now();
+            
             html += '<div class="cam" onclick="window.open(\'' + img + '\', \'_blank\')">';
-            html += '<img src="' + img + '" alt="' + loc + '" loading="lazy">';
+            html += '<img src="' + imgWithTimestamp + '" alt="' + loc + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x140?text=No+Image\'">';
             html += '<div class="info">';
             html += '<div class="loc">📷 ' + loc + '</div>';
             html += '<div class="id">ID: ' + id + '</div>';
