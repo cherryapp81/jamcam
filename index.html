@@ -44,8 +44,8 @@
 </div>
 
 <script>
-    var API_KEY = '1UdcYjfDR9mYHeJCOPIloA==';
-    var API_URL = 'https://datamall2.lta.gov.sg/api/lta/odata/v4/TrafficImages';
+    var API_URL = '/api/traffic';
+    var API_KEY = '...';
     
     var allCameras = [];
 
@@ -60,7 +60,6 @@
         // Use XMLHttpRequest instead of fetch - sometimes bypasses CORS issues
         var xhr = new XMLHttpRequest();
         xhr.open('GET', API_URL, true);
-        xhr.setRequestHeader('AccountKey', API_KEY);
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.timeout = 15000;
         
