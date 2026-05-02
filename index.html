@@ -31,7 +31,7 @@
 <div class="top">
     <h1>📷 JamCam</h1>
     <p>Beat the jam, check the cam</p>
-    <p id="statusText" style="font-size:12px;">Connecting...</p>
+    <p id="statusText" style="font-size:12px;">Starting up...</p>
 </div>
 
 <div class="cameras" id="cameraGrid">
@@ -44,50 +44,42 @@
 </div>
 
 <script>
-    // This calls your Vercel serverless function (create api/traffic.js)
     var API_URL = '/api/traffic';
-    
     var allCameras = [];
 
     function loadCameras() {
         var grid = document.getElementById('cameraGrid');
         var status = document.getElementById('statusText');
         
-        grid.innerHTML = '<div class="loading"><div class="spinner"></div>Beating the jam...</div>';
-        status.textContent = 'Connecting...';
+        grid.innerHTML = '<div class="loading"><div class="spinner"></div>Fetching latest traffic cameras...</div>';
+        status.textContent = 'Connecting to LTA...';
         status.style.color = 'white';
 
-        // Use fetch for cleaner code
-        fetch(API_URL, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(function(response) {
-            if (!response.ok) {
-                throw new Error('HTTP ' + response.status);
-            }
-            return response.json();
-        })
-        .then(function(data) {
-            console.log('✅ JamCam: Got data!', data);
-            
-            if (data && data.value && data.value.length > 0) {
-                allCameras = data.value;
-                var now = new Date();
-                var t = now.toLocaleTimeString('en-SG', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-                status.textContent = '🟢 Live - ' + allCameras.length + ' cameras | ' + t;
-                status.style.color = '#CCFFCC';
-                showCameras();
-            } else {
-                showError('No camera data received from LTA');
-            }
-        })
-        .catch(function(error) {
-            console.error('Fetch error:', error);
-            showError('Cannot connect: ' + error.message);
-        });
+        fetch(API_URL)
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('Camera data received:', data);
+                
+                if (data && data.value && data.value.length > 0) {
+                    allCameras = data.value;
+                    var now = new Date();
+                    var timeStr = now.toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+                    status.textContent = '🟢 ' + allCameras.length + ' cameras live | ' + timeStr;
+                    status.style.color = '#CCFFCC';
+                    displayCameras();
+                } else {
+                    showError('No camera data received from server');
+                }
+            })
+            .catch(function(error) {
+                console.error('Fetch error:', error);
+                showError('Cannot connect: ' + error.message);
+            });
     }
     
     function showError(msg) {
@@ -106,23 +98,23 @@
             '</div>';
     }
     
-    function showCameras() {
+    function displayCameras() {
         var grid = document.getElementById('cameraGrid');
         var html = '';
         
         for (var i = 0; i < allCameras.length; i++) {
             var cam = allCameras[i];
             var id = cam.CameraID;
-            var img = cam.ImageLink;
-            var loc = cam.Location || 'Camera ' + id;
+            var imgUrl = cam.ImageLink;
+            var location = cam.Location || 'Camera ' + id;
             
-            // Add timestamp to prevent caching
-            var imgWithTimestamp = img + '?t=' + Date.now();
+            // Add cache-busting timestamp
+            var imgWithTimestamp = imgUrl + '?t=' + Date.now();
             
-            html += '<div class="cam" onclick="window.open(\'' + img + '\', \'_blank\')">';
-            html += '<img src="' + imgWithTimestamp + '" alt="' + loc + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x140?text=No+Image\'">';
+            html += '<div class="cam" onclick="window.open(\'' + imgUrl + '\', \'_blank\')">';
+            html += '<img src="' + imgWithTimestamp + '" alt="' + location + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x140?text=Offline\'">';
             html += '<div class="info">';
-            html += '<div class="loc">📷 ' + loc + '</div>';
+            html += '<div class="loc">📷 ' + location + '</div>';
             html += '<div class="id">ID: ' + id + '</div>';
             html += '</div></div>';
         }
@@ -131,20 +123,25 @@
     }
     
     function shareApp() {
-        var msg = '🚗 Beat the jam, check the cam!\n\nJamCam - Live traffic cameras at SG checkpoints.\n\n' + window.location.href;
+        var message = '🚗 Beat the jam, check the cam!\n\nJamCam - Live traffic cameras at SG checkpoints.\n\n' + window.location.href;
         if (navigator.share) {
-            navigator.share({title:'JamCam', text:msg, url:window.location.href}).catch(function(){});
+            navigator.share({title:'JamCam', text:message, url:window.location.href}).catch(function(){});
         } else {
-            var t = document.createElement('textarea'); t.value=msg; document.body.appendChild(t);
-            t.select(); document.execCommand('copy'); document.body.removeChild(t);
-            alert('✅ Link copied!');
+            // Fallback copy to clipboard
+            var textarea = document.createElement('textarea');
+            textarea.value = message;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('✅ Link copied to clipboard!');
         }
     }
     
     // Refresh every 2 minutes
     setInterval(loadCameras, 120000);
     
-    // Start
+    // Initial load
     loadCameras();
 </script>
 
