@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>JamCam - SG-JB Checkpoint Traffic</title>
+    <title>JamCam - SG-JB Checkpoint Traffic with Dual Maps</title>
     <meta name="google-adsense-account" content="ca-pub-YOUR_ID_HERE">
     <style>
         * {
@@ -34,7 +34,46 @@
             font-size: 13px; 
         }
         
-        /* Section Headers */
+        /* Map Containers */
+        .map-section {
+            margin: 10px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: white;
+        }
+        
+        .map-header {
+            background: #2c3e50;
+            color: white;
+            padding: 10px 16px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .map-header span {
+            font-size: 18px;
+        }
+        
+        iframe {
+            display: block;
+            width: 100%;
+            height: 300px;
+        }
+        
+        .map-info {
+            background: white;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Section Headers for Cameras */
         .section-header {
             background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
             color: white;
@@ -279,18 +318,50 @@
         .section-divider {
             margin: 5px 0;
         }
+        
+        /* Traffic Legend */
+        .traffic-legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 5px 0;
+            font-size: 10px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+            border-radius: 3px;
+        }
+        
+        .maps-container {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .maps-container {
+                flex-direction: row;
+            }
+            .map-section {
+                flex: 1;
+                margin: 0;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="top">
     <h1>📷 JamCam</h1>
-    <p>SG-JB Checkpoint Traffic | Beat the jam, check the cam</p>
+    <p>SG-JB Checkpoint Traffic | Live Cameras + Real-Time Traffic Maps</p>
     <p id="statusText" class="status-text" style="color: #CCFFCC;">Starting up...</p>
 </div>
 
 <div class="info-note">
-    🚗 Live traffic updates for Woodlands Causeway & Tuas Second Link
+    🚗 Live traffic maps + Camera feeds for Woodlands Causeway & Tuas Second Link
 </div>
 
 <!-- Banner Ad -->
@@ -305,14 +376,58 @@
     <div class="loading"><div class="spinner"></div>Loading checkpoint cameras...</div>
 </div>
 
+<!-- Dual Maps Section - After Cameras -->
+<div class="maps-container">
+    <!-- Woodlands Map -->
+    <div class="map-section">
+        <div class="map-header">
+            <span>🏢</span> Woodlands Checkpoint Traffic
+        </div>
+        <iframe 
+            src="https://www.onemap.gov.sg/main/embed?lat=1.444&lng=103.768&zoom=14&layers=traffic"
+            style="border:0;" 
+            frameborder="0" 
+            scrolling="no" 
+            allowfullscreen>
+        </iframe>
+        <div class="map-info">
+            📍 Woodlands Causeway Area | Live Traffic
+        </div>
+    </div>
+    
+    <!-- Tuas Map -->
+    <div class="map-section">
+        <div class="map-header">
+            <span>🌉</span> Tuas Checkpoint Traffic
+        </div>
+        <iframe 
+            src="https://www.onemap.gov.sg/main/embed?lat=1.347&lng=103.633&zoom=14&layers=traffic"
+            style="border:0;" 
+            frameborder="0" 
+            scrolling="no" 
+            allowfullscreen>
+        </iframe>
+        <div class="map-info">
+            📍 Tuas Second Link Area | Live Traffic
+        </div>
+    </div>
+</div>
+
+<div class="traffic-legend" style="margin: 5px 10px 0 10px;">
+    <span><span class="legend-color" style="background:#4CAF50;"></span> Smooth</span>
+    <span><span class="legend-color" style="background:#FF9800;"></span> Moderate</span>
+    <span><span class="legend-color" style="background:#f44336;"></span> Heavy</span>
+    <span><span class="legend-color" style="background:#808080;"></span> No Data</span>
+</div>
+
 <!-- Premium Upsell -->
 <div class="premium-upsell" id="premiumUpsell" onclick="showPremiumPrompt()">
-    ⭐ Go Premium - No Ads + Traffic Alerts ⭐<br>
+    ⭐ Go Premium - No Ads + Traffic Alerts + Live Maps ⭐<br>
     <span style="font-size:11px;">$2.99/month | Cancel anytime</span>
 </div>
 
 <div class="bottom">
-    <button class="btn btn-r" onclick="loadCameras()">🔄 Refresh</button>
+    <button class="btn btn-r" onclick="loadCameras()">🔄 Refresh Cameras</button>
     <button class="btn btn-s" onclick="shareApp()">📤 Share</button>
 </div>
 
@@ -500,19 +615,20 @@
                       '✅ Real-time traffic predictions\n' +
                       '✅ Push notifications for jams\n' +
                       '✅ Save favorite cameras\n' +
+                      '✅ Live maps with traffic overlay\n' +
                       '✅ 5-minute refresh intervals\n\n' +
                       '💰 Only $2.99/month\n' +
                       '💰 $19.99/year (Save 45%)\n\n' +
-                      '📧 Contact: jamcam@example.com for payment details\n\n' +
+                      '📧 Contact: jamcam.app@gmail.com for payment details\n\n' +
                       '💳 Stripe/PayPal coming soon!';
         
         alert(message);
     }
     
     function shareApp() {
-        var message = '🚗 Beat the jam at SG-JB checkpoints!\n\nJamCam - Live traffic cameras with wait time estimates\nWoodlands Causeway & Tuas Second Link\n\n' + window.location.href;
+        var message = '🚗 Beat the jam at SG-JB checkpoints!\n\nJamCam - Live traffic cameras + dual maps with wait time estimates\nWoodlands Causeway & Tuas Second Link\n\n' + window.location.href;
         if (navigator.share) {
-            navigator.share({title:'JamCam - Checkpoint Traffic', text:message, url:window.location.href}).catch(function(){});
+            navigator.share({title:'JamCam - Checkpoint Traffic with Maps', text:message, url:window.location.href}).catch(function(){});
         } else {
             var textarea = document.createElement('textarea');
             textarea.value = message;
@@ -529,6 +645,14 @@
     setInterval(loadCameras, 120000);
     loadCameras();
 </script>
+
+<!-- Footer with links -->
+<div style="text-align: center; padding: 15px; font-size: 11px; color: #999; background: white; margin-top: 10px;">
+    <a href="/privacy.html" style="color: #999; margin: 0 8px; text-decoration: none;">Privacy Policy</a> |
+    <a href="/contact.html" style="color: #999; margin: 0 8px; text-decoration: none;">Contact</a> |
+    <a href="/about.html" style="color: #999; margin: 0 8px; text-decoration: none;">About</a> |
+    <a href="https://www.buymeacoffee.com/yourusername" target="_blank" style="color: #FF6B35; margin: 0 8px; text-decoration: none; font-weight: bold;">☕ Support</a>
+</div>
 
 </body>
 </html>
