@@ -3,27 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JamCam</title>
+    <title>JamCam - Beat the jam, check the cam</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             background: #f0f0f0;
+            padding-bottom: 80px;
         }
         .top {
             background: #FF6B35;
             color: white;
             padding: 20px;
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        .top h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-        .top p {
-            margin: 5px 0 0;
-            font-size: 14px;
-        }
+        .top h1 { margin: 0; font-size: 28px; }
+        .top p { margin: 3px 0 0; font-size: 13px; }
         .cameras {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -35,27 +33,79 @@
             border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .cam img {
             width: 100%;
             height: 140px;
             object-fit: cover;
             display: block;
+            background: #e0e0e0;
         }
-        .cam p {
-            padding: 8px;
-            margin: 0;
-            font-size: 12px;
-        }
+        .cam .info { padding: 8px; }
+        .cam .info .loc { font-size: 11px; font-weight: bold; color: #333; }
+        .cam .info .id { font-size: 10px; color: #999; }
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 50px 20px;
             font-size: 16px;
             color: #666;
         }
-        #statusText {
-            font-size: 12px;
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #FF6B35;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 10px 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-r { background: #FF6B35; color: white; }
+        .btn-s { background: #FFF5F0; color: #FF6B35; border: 2px solid #FFE0D0; }
+        .error-box {
+            background: #FFF3F0;
+            border: 2px solid #FF6B35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 10px;
+            text-align: center;
+        }
+        .error-box button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #statusText { font-size: 12px; }
     </style>
 </head>
 <body>
@@ -63,69 +113,187 @@
 <div class="top">
     <h1>📷 JamCam</h1>
     <p>Beat the jam, check the cam</p>
-    <p id="statusText">Connecting to LTA cameras...</p>
+    <p id="statusText">Connecting...</p>
 </div>
 
 <div class="cameras" id="cameraGrid">
-    <div class="loading">Loading cameras...</div>
+    <div class="loading">
+        <div class="spinner"></div>
+        Loading cameras...
+    </div>
+</div>
+
+<div class="bottom">
+    <button class="btn btn-r" onclick="loadCameras()">🔄 Refresh</button>
+    <button class="btn btn-s" onclick="shareApp()">📤 Share</button>
 </div>
 
 <script>
-    var apiKey = '1UdcYjfDR9mYHeJCOPIloA==';
-    var apiUrl = 'https://datamall2.lta.gov.sg/api/lta/odata/v4/TrafficImages';
+    var API_KEY = '1UdcYjfDR9mYHeJCOPIloA==';
+    var API_URL = 'https://datamall2.lta.gov.sg/api/lta/odata/v4/TrafficImages';
+    
+    // CORS Proxy - multiple fallbacks
+    var PROXIES = [
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?'
+    ];
+    
+    var currentProxy = 0;
+    var allCameras = [];
 
-    function fetchData() {
-        var statusEl = document.getElementById('statusText');
-        var gridEl = document.getElementById('cameraGrid');
+    function loadCameras() {
+        var grid = document.getElementById('cameraGrid');
+        var status = document.getElementById('statusText');
+        
+        grid.innerHTML = '<div class="loading"><div class="spinner"></div>Beating the jam...</div>';
+        status.textContent = 'Connecting...';
+        status.style.color = 'white';
 
-        fetch(apiUrl, {
-            method: 'GET',
+        tryProxy(0);
+    }
+
+    function tryProxy(index) {
+        if (index >= PROXIES.length) {
+            // All proxies failed, try direct as last resort
+            fetchDirect();
+            return;
+        }
+
+        var status = document.getElementById('statusText');
+        var encodedUrl = encodeURIComponent(API_URL);
+        var proxyUrl = PROXIES[index] + encodedUrl;
+
+        console.log('JamCam: Trying proxy ' + (index + 1));
+
+        fetch(proxyUrl)
+            .then(function(r) {
+                if (!r.ok) throw new Error('Proxy failed: ' + r.status);
+                return r.json();
+            })
+            .then(function(data) {
+                processData(data, 'Proxy ' + (index + 1));
+            })
+            .catch(function(e) {
+                console.log('JamCam: Proxy ' + (index + 1) + ' failed, trying next...');
+                tryProxy(index + 1);
+            });
+    }
+
+    function fetchDirect() {
+        var status = document.getElementById('statusText');
+        var grid = document.getElementById('cameraGrid');
+        
+        console.log('JamCam: Trying direct LTA API connection...');
+
+        fetch(API_URL, {
             headers: {
-                'AccountKey': apiKey,
+                'AccountKey': API_KEY,
                 'Accept': 'application/json'
             }
         })
-        .then(function(response) {
-            if (!response.ok) {
-                throw new Error('Server responded with ' + response.status);
-            }
-            return response.json();
+        .then(function(r) {
+            if (!r.ok) throw new Error('Server error: ' + r.status);
+            return r.json();
         })
         .then(function(data) {
-            var cameras = data.value;
-            
-            if (!cameras || cameras.length === 0) {
-                throw new Error('No cameras found');
-            }
-
-            statusEl.textContent = '🟢 Live - ' + cameras.length + ' cameras';
-            statusEl.style.color = '#4CAF50';
-
-            var html = '';
-            for (var i = 0; i < cameras.length; i++) {
-                var cam = cameras[i];
-                var id = cam.CameraID;
-                var imgUrl = cam.ImageLink;
-                var location = cam.Location || 'Camera ' + id;
-
-                html += '<div class="cam" onclick="window.open(\'' + imgUrl + '\', \'_blank\')">';
-                html += '<img src="' + imgUrl + '" alt="' + location + '" onerror="this.style.display=\'none\'">';
-                html += '<p>📷 ' + location + '</p>';
-                html += '</div>';
-            }
-
-            gridEl.innerHTML = html;
+            processData(data, 'Direct LTA');
         })
-        .catch(function(error) {
-            console.error('JamCam Error:', error);
-            statusEl.textContent = '🔴 Error: ' + error.message;
-            statusEl.style.color = '#f44336';
+        .catch(function(e) {
+            status.textContent = '🔴 All connections failed';
+            status.style.color = '#FFCCCC';
             
-            gridEl.innerHTML = '<div class="loading">Error loading cameras.<br><br><button onclick="fetchData()" style="padding:10px 20px;background:#FF6B35;color:white;border:none;border-radius:5px;font-size:16px;cursor:pointer;">🔄 Try Again</button></div>';
+            grid.innerHTML = 
+                '<div class="error-box">' +
+                '<div style="font-size:40px;margin-bottom:10px;">📡</div>' +
+                '<strong>Cannot Connect to LTA</strong><br><br>' +
+                'All connection methods failed.<br>' +
+                'This may be a temporary LTA server issue.<br><br>' +
+                'Error: ' + e.message + '<br><br>' +
+                '<button onclick="loadCameras()">🔄 Try Again</button><br><br>' +
+                '<small>Try again in a few minutes</small>' +
+                '</div>';
         });
     }
 
-    fetchData();
+    function processData(data, source) {
+        var status = document.getElementById('statusText');
+        var grid = document.getElementById('cameraGrid');
+
+        if (data && data.value && data.value.length > 0) {
+            allCameras = data.value;
+            
+            var now = new Date();
+            var timeStr = now.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            status.textContent = '🟢 Live - ' + allCameras.length + ' cameras (' + source + ')';
+            status.style.color = '#CCFFCC';
+            
+            showCameras(allCameras);
+        } else {
+            throw new Error('No camera data received');
+        }
+    }
+
+    function showCameras(cameras) {
+        var grid = document.getElementById('cameraGrid');
+        var html = '';
+
+        for (var i = 0; i < cameras.length; i++) {
+            var cam = cameras[i];
+            var id = cam.CameraID;
+            var imgUrl = cam.ImageLink;
+            var loc = cam.Location || 'Camera ' + id;
+
+            html += '<div class="cam" onclick="viewFull(\'' + imgUrl + '\', \'' + loc.replace(/'/g, "\\'") + '\')">';
+            html += '<img src="' + imgUrl + '" alt="' + loc + '" loading="lazy" onerror="this.style.display=\'none\'">';
+            html += '<div class="info">';
+            html += '<div class="loc">📷 ' + loc + '</div>';
+            html += '<div class="id">ID: ' + id + '</div>';
+            html += '</div>';
+            html += '</div>';
+        }
+
+        grid.innerHTML = html;
+    }
+
+    function viewFull(imgUrl, loc) {
+        var w = window.open('', '_blank');
+        w.document.write(
+            '<html><head><title>' + loc + ' - JamCam</title>' +
+            '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+            '<style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}' +
+            'img{max-width:100%;max-height:100vh;}' +
+            '.bar{position:fixed;top:0;left:0;right:0;background:#111;color:#fff;padding:10px;text-align:center;font-family:Arial;font-size:14px;}' +
+            '.close{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#FF6B35;color:#fff;border:none;padding:12px 30px;border-radius:25px;font-size:16px;cursor:pointer;}' +
+            '</style></head><body>' +
+            '<div class="bar">' + loc + ' | JamCam 📷</div>' +
+            '<img src="' + imgUrl + '" onerror="this.src=\'https://placehold.co/600x400/333/white?text=Camera+Offline\'">' +
+            '<button class="close" onclick="window.close()">✕ Close</button>' +
+            '</body></html>'
+        );
+    }
+
+    function shareApp() {
+        var msg = '🚗 Beat the jam, check the cam!\n\nUse JamCam to see live cameras at SG checkpoints.\n\n' + window.location.href;
+        
+        if (navigator.share) {
+            navigator.share({ title: 'JamCam', text: msg, url: window.location.href }).catch(function(){});
+        } else {
+            var t = document.createElement('textarea');
+            t.value = msg;
+            document.body.appendChild(t);
+            t.select();
+            document.execCommand('copy');
+            document.body.removeChild(t);
+            alert('✅ Link copied!\n\n' + msg);
+        }
+    }
+
+    // Auto refresh every 2 minutes
+    setInterval(loadCameras, 120000);
+
+    // Start
+    loadCameras();
 </script>
 
 </body>
