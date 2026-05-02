@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>JamCam - SG-JB Checkpoint Traffic</title>
+    <meta name="google-adsense-account" content="ca-pub-4888105418888143">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4888105418888143"
+         crossorigin="anonymous"></script>
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
@@ -21,8 +26,15 @@
             text-align: center; 
         }
         
-        .top h1 { margin: 0; font-size: 26px; }
-        .top p { margin: 3px 0 0; font-size: 13px; }
+        .top h1 { 
+            margin: 0; 
+            font-size: 26px; 
+        }
+        
+        .top p { 
+            margin: 3px 0 0; 
+            font-size: 13px; 
+        }
         
         /* Map Containers */
         .map-container {
@@ -44,7 +56,9 @@
             gap: 8px;
         }
         
-        .map-header span { font-size: 18px; }
+        .map-header span {
+            font-size: 18px;
+        }
         
         iframe {
             display: block;
@@ -76,7 +90,9 @@
             gap: 8px;
         }
         
-        .section-header span { font-size: 20px; }
+        .section-header span {
+            font-size: 20px;
+        }
         
         /* Mobile: 1 column */
         .cameras { 
@@ -91,11 +107,16 @@
             .cameras { 
                 grid-template-columns: 1fr 1fr;
             }
-            .cam img { height: 350px; }
+            .cam img { 
+                height: 350px;
+            }
         }
         
+        /* Mobile image height */
         @media (max-width: 767px) {
-            .cam img { height: 250px; }
+            .cam img { 
+                height: 250px;
+            }
         }
         
         .cam { 
@@ -104,10 +125,13 @@
             overflow: hidden; 
             cursor: pointer; 
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         
-        .cam:hover { transform: translateY(-2px); }
+        .cam:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
         
         .cam img { 
             width: 100%; 
@@ -116,12 +140,33 @@
             background: #e0e0e0; 
         }
         
-        .cam .info { padding: 10px; }
-        .cam .info .loc { font-size: 13px; font-weight: bold; color: #333; margin-bottom: 4px; }
-        .cam .info .id { font-size: 10px; color: #999; }
-        .cam .info .wait-time { font-size: 12px; margin-top: 5px; font-weight: bold; }
+        .cam .info { 
+            padding: 10px; 
+        }
         
-        .loading { text-align: center; padding: 50px 20px; color: #666; }
+        .cam .info .loc { 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 4px;
+        }
+        
+        .cam .info .id { 
+            font-size: 10px; 
+            color: #999; 
+        }
+        
+        .cam .info .wait-time {
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        
+        .loading { 
+            text-align: center; 
+            padding: 50px 20px; 
+            color: #666; 
+        }
         
         .spinner { 
             border: 3px solid #f3f3f3; 
@@ -159,10 +204,23 @@
             font-size: 15px; 
             font-weight: 700; 
             cursor: pointer; 
+            transition: opacity 0.2s;
         }
         
-        .btn-r { background: #FF6B35; color: white; }
-        .btn-s { background: #FFF5F0; color: #FF6B35; border: 2px solid #FFE0D0; }
+        .btn:active {
+            opacity: 0.8;
+        }
+        
+        .btn-r { 
+            background: #FF6B35; 
+            color: white; 
+        }
+        
+        .btn-s { 
+            background: #FFF5F0; 
+            color: #FF6B35; 
+            border: 2px solid #FFE0D0; 
+        }
         
         .error-box { 
             background: #FFF3F0; 
@@ -195,6 +253,7 @@
             border-bottom: 1px solid #FFE0D0; 
         }
         
+        /* Traffic badge */
         .traffic-badge {
             position: absolute;
             top: 8px;
@@ -207,8 +266,12 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        .status-text { font-size: 11px; margin-top: 5px; }
+        .status-text {
+            font-size: 11px;
+            margin-top: 5px;
+        }
         
+        /* Ad container */
         .ad-container { 
             text-align: center; 
             margin: 10px; 
@@ -219,27 +282,55 @@
             color: #999;
         }
         
-        .section-divider { margin: 5px 0; }
+        /* Section divider */
+        .section-divider {
+            margin: 5px 0;
+        }
         
+        /* Traffic Legend */
         .traffic-legend {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin: 5px 10px;
-            font-size: 10px;
+            gap: 20px;
+            margin: 15px 10px;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 13px;
+            font-weight: bold;
         }
         
         .legend-color {
             display: inline-block;
-            width: 20px;
-            height: 10px;
-            border-radius: 3px;
+            width: 24px;
+            height: 14px;
+            border-radius: 4px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 30px;
+            background: #f8f8f8;
+        }
+        
+        @media (max-width: 768px) {
+            .traffic-legend {
+                gap: 10px;
+                padding: 10px 15px;
+                font-size: 11px;
+                flex-wrap: wrap;
+            }
+            .legend-item {
+                padding: 3px 10px;
+            }
         }
     </style>
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4888105418888143"
-     crossorigin="anonymous"></script>
-
 </head>
 <body>
 
@@ -249,32 +340,11 @@
     <p id="statusText" class="status-text" style="color: #CCFFCC;">Starting up...</p>
 </div>
 
-<!-- Site Description for Google AdSense Review -->
-<div style="background: #f0f7ff; padding: 20px; margin: 10px; border-radius: 12px; border: 1px solid #d0e0f0;">
-    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #FF6B35;">About JamCam</h2>
-    <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.6; color: #333;">
-        <strong>JamCam provides live traffic camera feeds for the two main checkpoints between Singapore and Malaysia:</strong>
-        Woodlands Causeway and Tuas Second Link.
-    </p>
-    <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.6; color: #333;">
-        Our mission is to help <strong>daily commuters, travelers, and delivery drivers</strong> make informed decisions
-        about which checkpoint to use and when to cross, potentially saving hours of waiting time.
-    </p>
-    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #333;">
-        Each camera feed includes <strong>real-time traffic status indicators</strong> (Heavy/Moderate/Light)
-        and <strong>estimated wait times</strong> based on historical traffic patterns.
-    </p>
-    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #d0e0f0; font-size: 12px; color: #666;">
-        📍 <strong>Data Source:</strong> LTA DataMall (Singapore Land Transport Authority)<br>
-        🗺️ <strong>Maps:</strong> OneMap Singapore
-    </div>
-</div>
-
 <div class="info-note">
     🚗 Live camera feeds for Woodlands Causeway & Tuas Second Link
 </div>
 
-    <!-- Ad Space (Add AdSense code here after approval) -->
+<!-- Ad Space (Google AdSense will be added here after approval) -->
 <div class="ad-container" id="adSpace">
     <div style="font-size:10px; text-transform:uppercase;">Advertisement</div>
     <div style="padding: 20px; background: #e0e0e0; border-radius: 8px;">
@@ -284,18 +354,18 @@
 
 <div id="cameraGrid"></div>
 
-<div class="traffic-legend" style="border: 2px solid #FF6B35;">
+<div class="traffic-legend">
     <div class="legend-item">
         <span class="legend-color" style="background:#4CAF50;"></span>
-        <span>🟢 Smooth</span>
+        <span>Smooth Traffic</span>
     </div>
     <div class="legend-item">
         <span class="legend-color" style="background:#FF9800;"></span>
-        <span>🟠 Moderate</span>
+        <span>Moderate Traffic</span>
     </div>
     <div class="legend-item">
         <span class="legend-color" style="background:#f44336;"></span>
-        <span>🔴 Heavy</span>
+        <span>Heavy Traffic</span>
     </div>
 </div>
 
@@ -319,13 +389,18 @@
 
         fetch(API_URL)
             .then(function(response) {
-                if (!response.ok) throw new Error('HTTP ' + response.status);
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
                 return response.json();
             })
             .then(function(data) {
+                console.log('Camera data received:', data);
+                
                 if (data && data.value && data.value.length > 0) {
                     allCameras = data.value;
                     
+                    // Separate Woodlands and Tuas cameras
                     woodlandsCameras = allCameras.filter(cam => 
                         cam.CameraID === '2701' || cam.CameraID === '2702' || cam.CameraID === '2705'
                     );
@@ -344,6 +419,7 @@
                 }
             })
             .catch(function(error) {
+                console.error('Fetch error:', error);
                 showError('Cannot connect: ' + error.message);
             });
     }
@@ -371,7 +447,7 @@
                    '<span>' + title + '</span>' +
                    '<span style="font-size:12px; margin-left:auto;">No cameras available</span>' +
                    '</div>' +
-                   '<div class="cameras">' +
+                   '<div class="cameras" style="grid-template-columns:1fr;">' +
                    '<div class="error-box" style="margin:0;">No cameras found for ' + title + '</div>' +
                    '</div>';
         }
@@ -456,6 +532,27 @@
     setInterval(loadCameras, 120000);
     loadCameras();
 </script>
+
+<!-- About JamCam Section (for Google AdSense) -->
+<div style="background: #f0f7ff; padding: 20px; margin: 10px; border-radius: 12px; border: 1px solid #d0e0f0;">
+    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #FF6B35;">About JamCam</h2>
+    <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.6; color: #333;">
+        <strong>JamCam provides live traffic camera feeds for the two main checkpoints between Singapore and Malaysia:</strong>
+        Woodlands Causeway and Tuas Second Link.
+    </p>
+    <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.6; color: #333;">
+        Our mission is to help <strong>daily commuters, travelers, and delivery drivers</strong> make informed decisions
+        about which checkpoint to use and when to cross, potentially saving hours of waiting time.
+    </p>
+    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #333;">
+        Each camera feed includes <strong>real-time traffic status indicators</strong> (Heavy/Moderate/Light)
+        and <strong>estimated wait times</strong> based on historical traffic patterns.
+    </p>
+    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #d0e0f0; font-size: 12px; color: #666;">
+        📍 <strong>Data Source:</strong> LTA DataMall (Singapore Land Transport Authority)<br>
+        🗺️ <strong>Maps:</strong> OneMap Singapore
+    </div>
+</div>
 
 <!-- Footer -->
 <div style="text-align: center; padding: 15px; font-size: 11px; color: #999; background: white; margin-top: 10px;">
