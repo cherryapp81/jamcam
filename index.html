@@ -20,7 +20,7 @@
         }
         
         .top { 
-            background: #FF6B35; 
+            background: #1a252f; 
             color: white; 
             padding: 20px; 
             text-align: center; 
@@ -46,7 +46,7 @@
         }
         
         .map-header {
-            background: #2c3e50;
+            background: #1a252f;
             color: white;
             padding: 10px 16px;
             font-weight: bold;
@@ -78,7 +78,7 @@
         
         /* Section Headers for Cameras */
         .section-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
             color: white;
             padding: 12px 16px;
             margin: 10px 10px 5px 10px;
@@ -138,6 +138,7 @@
             object-fit: cover; 
             display: block; 
             background: #e0e0e0; 
+            cursor: pointer;
         }
         
         .cam .info { 
@@ -162,6 +163,53 @@
             font-weight: bold;
         }
         
+        /* Lightbox modal for zoomed images */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox img {
+            max-width: 95%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .lightbox-caption {
+            color: white;
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
         .loading { 
             text-align: center; 
             padding: 50px 20px; 
@@ -170,7 +218,7 @@
         
         .spinner { 
             border: 3px solid #f3f3f3; 
-            border-top: 3px solid #FF6B35; 
+            border-top: 3px solid #1a252f; 
             border-radius: 50%; 
             width: 40px; 
             height: 40px; 
@@ -212,19 +260,19 @@
         }
         
         .btn-r { 
-            background: #FF6B35; 
+            background: #1a252f; 
             color: white; 
         }
         
         .btn-s { 
-            background: #FFF5F0; 
-            color: #FF6B35; 
-            border: 2px solid #FFE0D0; 
+            background: #f0f7ff; 
+            color: #1a252f; 
+            border: 2px solid #1a252f; 
         }
         
         .error-box { 
             background: #FFF3F0; 
-            border: 2px solid #FF6B35; 
+            border: 2px solid #1a252f; 
             border-radius: 12px; 
             padding: 20px; 
             margin: 20px 10px; 
@@ -232,7 +280,7 @@
         }
         
         .error-box button { 
-            background: #FF6B35; 
+            background: #1a252f; 
             color: white; 
             border: none; 
             padding: 12px 25px; 
@@ -244,13 +292,13 @@
         }
         
         .info-note { 
-            background: #FFF5F0; 
-            color: #FF6B35; 
+            background: #f0f7ff; 
+            color: #1a252f; 
             padding: 8px; 
             text-align: center; 
             font-size: 12px; 
             font-weight: bold; 
-            border-bottom: 1px solid #FFE0D0; 
+            border-bottom: 1px solid #d0e0f0; 
         }
         
         /* Traffic badge */
@@ -374,11 +422,36 @@
     <button class="btn btn-s" onclick="shareApp()">📤 Share</button>
 </div>
 
+<!-- Lightbox Modal for Zoomed Images -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    <img id="lightbox-img" src="" alt="Zoomed traffic camera">
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+</div>
+
 <script>
     var API_URL = '/api/traffic';
     var allCameras = [];
     var woodlandsCameras = [];
     var tuasCameras = [];
+
+    // Lightbox functions
+    function openLightbox(imageUrl, caption) {
+        var lightbox = document.getElementById('lightbox');
+        var lightboxImg = document.getElementById('lightbox-img');
+        var lightboxCaption = document.getElementById('lightbox-caption');
+        
+        lightboxImg.src = imageUrl;
+        lightboxCaption.textContent = caption;
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeLightbox() {
+        var lightbox = document.getElementById('lightbox');
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 
     function loadCameras() {
         var status = document.getElementById('statusText');
@@ -472,7 +545,8 @@
             var borderColor = trafficStatus.color;
             var badgeText = trafficStatus.status;
             
-            html += '<div class="cam" onclick="window.open(\'' + imgUrl + '\', \'_blank\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
+            // Use openLightbox instead of window.open
+            html += '<div class="cam" onclick="openLightbox(\'' + imgUrl + '\', \'' + location.replace(/'/g, "\\'") + '\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
             html += '<div class="traffic-badge" style="background: ' + borderColor + '; color: white;">' + badgeText + '</div>';
             html += '<img src="' + imgWithTimestamp + '" alt="' + location + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x350?text=Loading+Failed\'">';
             html += '<div class="info">';
@@ -528,6 +602,13 @@
         }
     }
     
+    // Close lightbox with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeLightbox();
+        }
+    });
+    
     // Auto-refresh every 2 minutes
     setInterval(loadCameras, 120000);
     loadCameras();
@@ -535,7 +616,7 @@
 
 <!-- About JamCam Section (for Google AdSense) -->
 <div style="background: #f0f7ff; padding: 20px; margin: 10px; border-radius: 12px; border: 1px solid #d0e0f0;">
-    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #FF6B35;">About JamCam</h2>
+    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #1a252f;">About JamCam</h2>
     <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.6; color: #333;">
         <strong>JamCam provides live traffic camera feeds for the two main checkpoints between Singapore and Malaysia:</strong>
         Woodlands Causeway and Tuas Second Link.
