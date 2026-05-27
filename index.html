@@ -1,15 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4888105418888143"
-     crossorigin="anonymous"></script>
-
-    <meta name="google-adsense-account" content="ca-pub-4888105418888143">
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>JamCam - SG-JB Checkpoint Traffic</title>
+    <title>JamCam - SG-JB Checkpoint Traffic with Community Reports</title>
     <meta name="google-adsense-account" content="ca-pub-4888105418888143">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4888105418888143"
          crossorigin="anonymous"></script>
@@ -42,7 +36,6 @@
             font-size: 13px; 
         }
         
-        /* Map Containers */
         .map-container {
             margin: 10px;
             border-radius: 12px;
@@ -82,7 +75,6 @@
             border-top: 1px solid #eee;
         }
         
-        /* Section Headers for Cameras */
         .section-header {
             background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
             color: white;
@@ -100,7 +92,6 @@
             font-size: 20px;
         }
         
-        /* Mobile: 1 column */
         .cameras { 
             display: grid; 
             grid-template-columns: 1fr;
@@ -108,7 +99,6 @@
             padding: 12px; 
         }
         
-        /* Desktop: 2 columns */
         @media (min-width: 768px) {
             .cameras { 
                 grid-template-columns: 1fr 1fr;
@@ -118,7 +108,6 @@
             }
         }
         
-        /* Mobile image height */
         @media (max-width: 767px) {
             .cam img { 
                 height: 250px;
@@ -169,7 +158,7 @@
             font-weight: bold;
         }
         
-        /* Lightbox modal for zoomed images */
+        /* Lightbox styles */
         .lightbox {
             display: none;
             position: fixed;
@@ -214,6 +203,116 @@
             margin-top: 15px;
             font-size: 14px;
             text-align: center;
+        }
+        
+        /* Comments Section */
+        .comments-section {
+            background: white;
+            margin: 10px;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comments-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .comments-header h3 {
+            margin: 0;
+            color: #1a252f;
+        }
+        
+        .comments-subtext {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+        }
+        
+        .comment-form-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .comment-name-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        
+        .comment-submit-btn {
+            background: #1a252f;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        
+        .comment-submit-btn:hover {
+            background: #2c3e50;
+        }
+        
+        .comments-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .comment-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        
+        .comment-meta {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        
+        .comment-meta strong {
+            color: #1a252f;
+        }
+        
+        .comment-message {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .empty-comments {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .loading-comments {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 13px;
         }
         
         .loading { 
@@ -307,7 +406,6 @@
             border-bottom: 1px solid #d0e0f0; 
         }
         
-        /* Traffic badge */
         .traffic-badge {
             position: absolute;
             top: 8px;
@@ -325,7 +423,6 @@
             margin-top: 5px;
         }
         
-        /* Ad container */
         .ad-container { 
             text-align: center; 
             margin: 10px; 
@@ -336,12 +433,10 @@
             color: #999;
         }
         
-        /* Section divider */
         .section-divider {
             margin: 5px 0;
         }
         
-        /* Traffic Legend */
         .traffic-legend {
             display: flex;
             justify-content: center;
@@ -390,15 +485,14 @@
 
 <div class="top">
     <h1>📷 JamCam</h1>
-    <p>SG-JB Checkpoint Traffic | Live Cameras + Location Maps</p>
+    <p>SG-JB Checkpoint Traffic | Live Cameras + Community Reports</p>
     <p id="statusText" class="status-text" style="color: #CCFFCC;">Starting up...</p>
 </div>
 
 <div class="info-note">
-    🚗 Live camera feeds for Woodlands Causeway & Tuas Second Link
+    🚗 Live camera feeds + Real-time commuter reports for Woodlands Causeway & Tuas Second Link
 </div>
 
-<!-- Ad Space (Google AdSense will be added here after approval) -->
 <div class="ad-container" id="adSpace">
     <div style="font-size:10px; text-transform:uppercase;">Advertisement</div>
     <div style="padding: 20px; background: #e0e0e0; border-radius: 8px;">
@@ -428,7 +522,6 @@
     <button class="btn btn-s" onclick="shareApp()">📤 Share</button>
 </div>
 
-<!-- Lightbox Modal for Zoomed Images -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">×</button>
     <img id="lightbox-img" src="" alt="Zoomed traffic camera">
@@ -436,12 +529,22 @@
 </div>
 
 <script>
+    // ============================================
+    // JAMCAM - COMPLETE JAVASCRIPT WITH COMMENTS
+    // ============================================
+    
+    // API Configuration
     var API_URL = '/api/traffic';
+    
+    // Data stores
     var allCameras = [];
     var woodlandsCameras = [];
     var tuasCameras = [];
-
-    // Lightbox functions
+    
+    // ============================================
+    // LIGHTBOX FUNCTIONS (Zoom images)
+    // ============================================
+    
     function openLightbox(imageUrl, caption) {
         var lightbox = document.getElementById('lightbox');
         var lightboxImg = document.getElementById('lightbox-img');
@@ -458,11 +561,151 @@
         lightbox.classList.remove('active');
         document.body.style.overflow = '';
     }
-
+    
+    // Close lightbox with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeLightbox();
+        }
+    });
+    
+    // ============================================
+    // COMMENT FUNCTIONS
+    // ============================================
+    
+    async function loadComments(checkpoint) {
+        const commentsList = document.getElementById(`${checkpoint}CommentsList`);
+        if (!commentsList) return;
+        
+        commentsList.innerHTML = '<div class="loading-comments">Loading comments...</div>';
+        
+        try {
+            const response = await fetch(`/api/comments?checkpoint=${checkpoint}`);
+            const data = await response.json();
+            
+            if (data.comments && data.comments.length > 0) {
+                commentsList.innerHTML = data.comments.map(function(comment) {
+                    return '<div class="comment-item">' +
+                        '<div class="comment-meta">' +
+                        '<strong>' + escapeHtml(comment.user_name) + '</strong> · ' + formatTimeAgo(comment.created_at) +
+                        '</div>' +
+                        '<div class="comment-message">' + escapeHtml(comment.message) + '</div>' +
+                        '</div>';
+                }).join('');
+            } else {
+                commentsList.innerHTML = '<div class="empty-comments">Be the first to share an update! 👋</div>';
+            }
+        } catch (error) {
+            console.error('Error loading comments:', error);
+            commentsList.innerHTML = '<div class="empty-comments">Unable to load comments. Please try again.</div>';
+        }
+    }
+    
+    function submitComment(checkpoint, btnElement) {
+        var messageInput = document.getElementById(checkpoint + 'CommentMsg');
+        var nameInput = document.getElementById(checkpoint + 'CommentName');
+        
+        var message = messageInput.value.trim();
+        var userName = nameInput.value.trim();
+        
+        if (!message) {
+            alert('Please write a message before posting.');
+            return;
+        }
+        
+        if (message.length < 3) {
+            alert('Message too short. Please write at least 3 characters.');
+            return;
+        }
+        
+        // Disable button while submitting
+        var originalText = btnElement.textContent;
+        btnElement.disabled = true;
+        btnElement.textContent = 'Posting...';
+        
+        fetch('/api/comments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                checkpoint: checkpoint,
+                user_name: userName || 'Anonymous',
+                message: message
+            })
+        })
+        .then(function(response) {
+            if (response.ok) {
+                // Clear form
+                messageInput.value = '';
+                nameInput.value = '';
+                // Reload comments
+                return loadComments(checkpoint);
+            } else {
+                return response.json().then(function(error) {
+                    throw new Error(error.error || 'Could not post comment');
+                });
+            }
+        })
+        .catch(function(error) {
+            console.error('Error posting comment:', error);
+            alert('Error: ' + error.message);
+        })
+        .finally(function() {
+            btnElement.disabled = false;
+            btnElement.textContent = originalText;
+        });
+    }
+    
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function formatTimeAgo(timestamp) {
+        var date = new Date(timestamp);
+        var now = new Date();
+        var seconds = Math.floor((now - date) / 1000);
+        
+        if (seconds < 60) return 'just now';
+        var minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return minutes + ' min ago';
+        var hours = Math.floor(minutes / 60);
+        if (hours < 24) return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+        var days = Math.floor(hours / 24);
+        return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+    }
+    
+    function createCommentSection(checkpoint, title) {
+        return '<div id="' + checkpoint + 'CommentsSection" class="comments-section" data-checkpoint="' + checkpoint + '">' +
+            '<div class="comments-header">' +
+            '<span style="font-size: 20px;">💬</span>' +
+            '<h3>' + title + ' - Commuter Reports</h3>' +
+            '</div>' +
+            '<div class="comments-subtext">' +
+            'Share real-time incidents, jam updates, or tips for fellow commuters' +
+            '</div>' +
+            '<div class="comment-form">' +
+            '<textarea id="' + checkpoint + 'CommentMsg" rows="2" placeholder="Example: Heavy queue at Woodlands customs, about 30min wait..."></textarea>' +
+            '<div class="comment-form-row">' +
+            '<input type="text" id="' + checkpoint + 'CommentName" class="comment-name-input" placeholder="Your name (optional)">' +
+            '<button onclick="submitComment(\'' + checkpoint + '\', this)" class="comment-submit-btn">📝 Post Update</button>' +
+            '</div>' +
+            '</div>' +
+            '<div id="' + checkpoint + 'CommentsList" class="comments-list">' +
+            '<div class="loading-comments">Loading comments...</div>' +
+            '</div>' +
+            '</div>';
+    }
+    
+    // ============================================
+    // MAIN FUNCTIONS
+    // ============================================
+    
     function loadCameras() {
         var status = document.getElementById('statusText');
+        var grid = document.getElementById('cameraGrid');
         
-        document.getElementById('cameraGrid').innerHTML = '<div class="loading"><div class="spinner"></div>Checking checkpoint traffic...</div>';
+        grid.innerHTML = '<div class="loading"><div class="spinner"></div>Checking checkpoint traffic...</div>';
         status.textContent = 'Connecting to LTA...';
         status.style.color = 'white';
 
@@ -479,19 +722,23 @@
                 if (data && data.value && data.value.length > 0) {
                     allCameras = data.value;
                     
-                    // Separate Woodlands and Tuas cameras
-                    woodlandsCameras = allCameras.filter(cam => 
-                        cam.CameraID === '2701' || cam.CameraID === '2702' || cam.CameraID === '2705'
-                    );
-                    tuasCameras = allCameras.filter(cam => 
-                        cam.CameraID === '4713' || cam.CameraID === '4703' || cam.CameraID === '4701'
-                    );
+                    // Filter Woodlands cameras (2701, 2702, 2705)
+                    woodlandsCameras = allCameras.filter(function(cam) {
+                        return cam.CameraID === '2701' || cam.CameraID === '2702' || cam.CameraID === '2705';
+                    });
+                    
+                    // Filter Tuas cameras (4713, 4703, 4701)
+                    tuasCameras = allCameras.filter(function(cam) {
+                        return cam.CameraID === '4713' || cam.CameraID === '4703' || cam.CameraID === '4701';
+                    });
                     
                     var now = new Date();
                     var timeStr = now.toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
                     var totalCams = woodlandsCameras.length + tuasCameras.length;
+                    
                     status.textContent = '🟢 ' + totalCams + ' checkpoint cams | Last update: ' + timeStr;
                     status.style.color = '#CCFFCC';
+                    
                     displayCameras();
                 } else {
                     showError('No checkpoint camera data received');
@@ -551,8 +798,10 @@
             var borderColor = trafficStatus.color;
             var badgeText = trafficStatus.status;
             
-            // Use openLightbox instead of window.open
-            html += '<div class="cam" onclick="openLightbox(\'' + imgUrl + '\', \'' + location.replace(/'/g, "\\'") + '\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
+            // Escape single quotes in location for JavaScript
+            var safeLocation = location.replace(/'/g, "\\'");
+            
+            html += '<div class="cam" onclick="openLightbox(\'' + imgUrl + '\', \'' + safeLocation + '\')" style="position:relative; border: 2px solid ' + borderColor + ';">';
             html += '<div class="traffic-badge" style="background: ' + borderColor + '; color: white;">' + badgeText + '</div>';
             html += '<img src="' + imgWithTimestamp + '" alt="' + location + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x350?text=Loading+Failed\'">';
             html += '<div class="info">';
@@ -569,7 +818,7 @@
     function renderMapSection(title, icon, lat, lng, zoomLevel) {
         var mapUrl = 'https://www.onemap.gov.sg/minimap?lat=' + lat + '&lng=' + lng + '&zoom=' + zoomLevel;
         
-        return '<div class="map-container">' +
+        return '<div class="map-container" id="' + title.toLowerCase().replace(' ', '') + 'MapContainer">' +
                '<div class="map-header">' +
                '<span>' + icon + '</span>' + title + ' Location Map' +
                '</div>' +
@@ -589,14 +838,37 @@
         if (woodlandsCameras.length === 0 && tuasCameras.length === 0) {
             grid.innerHTML = '<div class="error-box">No checkpoint cameras found. Please check back later.</div>';
         } else {
-            grid.innerHTML = woodlandsSection + woodlandsMap + '<div class="section-divider"></div>' + tuasSection + tuasMap;
+            grid.innerHTML = woodlandsSection + woodlandsMap + tuasSection + tuasMap;
+            
+            // Add comment sections after maps are rendered
+            setTimeout(function() {
+                var woodlandsMapContainer = document.getElementById('woodlandscheckpointMapContainer');
+                var tuasMapContainer = document.getElementById('tuascheckpointMapContainer');
+                
+                if (woodlandsMapContainer && !document.getElementById('woodlandsCommentsSection')) {
+                    var woodlandsCommentHtml = createCommentSection('woodlands', '🏢 Woodlands Checkpoint');
+                    woodlandsMapContainer.insertAdjacentHTML('afterend', woodlandsCommentHtml);
+                    loadComments('woodlands');
+                }
+                
+                if (tuasMapContainer && !document.getElementById('tuasCommentsSection')) {
+                    var tuasCommentHtml = createCommentSection('tuas', '🌉 Tuas Checkpoint');
+                    tuasMapContainer.insertAdjacentHTML('afterend', tuasCommentHtml);
+                    loadComments('tuas');
+                }
+            }, 100);
         }
     }
     
     function shareApp() {
-        var message = '🚗 Beat the jam at SG-JB checkpoints!\n\nJamCam - Live traffic cameras with wait time estimates\nWoodlands Causeway & Tuas Second Link\n\n' + window.location.href;
+        var message = '🚗 Beat the jam at SG-JB checkpoints!\n\nJamCam - Live traffic cameras with real-time commuter reports\nWoodlands Causeway & Tuas Second Link\n\n' + window.location.href;
+        
         if (navigator.share) {
-            navigator.share({title:'JamCam - Checkpoint Traffic', text:message, url:window.location.href}).catch(function(){});
+            navigator.share({
+                title: 'JamCam - Checkpoint Traffic',
+                text: message,
+                url: window.location.href
+            }).catch(function() {});
         } else {
             var textarea = document.createElement('textarea');
             textarea.value = message;
@@ -608,15 +880,14 @@
         }
     }
     
-    // Close lightbox with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeLightbox();
-        }
-    });
+    // ============================================
+    // INITIALIZATION
+    // ============================================
     
-    // Auto-refresh every 2 minutes
+    // Auto-refresh every 2 minutes (120,000 ms)
     setInterval(loadCameras, 120000);
+    
+    // Initial load
     loadCameras();
 </script>
 
@@ -637,7 +908,8 @@
     </p>
     <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #d0e0f0; font-size: 12px; color: #666;">
         📍 <strong>Data Source:</strong> LTA DataMall (Singapore Land Transport Authority)<br>
-        🗺️ <strong>Maps:</strong> OneMap Singapore
+        🗺️ <strong>Maps:</strong> OneMap Singapore<br>
+        💬 <strong>Community Reports:</strong> Real-time updates from fellow commuters
     </div>
 </div>
 
