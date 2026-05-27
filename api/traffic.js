@@ -160,3 +160,73 @@ function getWaitTimeEstimate(cameraId, timestamp) {
   
   return '5-10 min';
 }
+
+// ============================================
+// COMMENT APIs FOR SUPABASE
+// ============================================
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
+// GET comments for a checkpoint
+export async function getComments(req, res) {
+  const { checkpoint } = req.query;
+  
+  if (!checkpoint || !['woodlands', 'tuas'].includes(checkpoint)) {
+    return res.status(400).json({ error: 'Invalid checkpoint' });
+  }
+  
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/comments?checkpoint=eq.${checkpoint}&order=created_at.desc&limit=50`,
+      {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+    
+    const comments = await response.json();
+    return res.status(200).json({ comments });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+// POST a new comment
+export async function postComment(req, res) {
+  const { checkpoint, user_name, message } = req.body;
+  
+  if (!checkpoint || !['woodlands', 'tuas'].includes(checkpoint)) {
+    return res.status(400).json({ error: 'Invalid checkpoint' });
+  }
+  
+  if (!message || message.trim().length < 3) {
+    return res.status(400).json({ error: 'Message too short (min 3 characters)' });
+  }
+  
+  const userName = user_name?.trim() || 'Anonymous';
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify({
+        checkpoint,
+        user_name: userName,
+        message: message.trim()
+      })
+    });
+    
+    const newComment = await response.json();
+    return res.status(201).json({ comment: newComment[0] });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
